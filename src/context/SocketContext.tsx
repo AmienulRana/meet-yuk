@@ -17,7 +17,6 @@ export const SocketContext = createContext<UseSocketReturnType | null>(null);
 
 export const useSocket = () => {
   const context = useContext(SocketContext);
-  console.log(context);
   // if (!context) {
   //   throw new Error("useSocket must be used within a SocketProvider");
   // }
@@ -30,7 +29,6 @@ export const SocketProvider: React.FC<SocketContextProps> = (props) => {
 
   useEffect(() => {
     const connection = io();
-    console.log("socket connection", connection);
     setSocket(connection);
 
     return () => {
@@ -40,7 +38,6 @@ export const SocketProvider: React.FC<SocketContextProps> = (props) => {
 
   useEffect(() => {
     socket?.on("connect_error", async (err) => {
-      console.log("Error establishing socket", err);
       await fetch("/api/socket");
     });
 
