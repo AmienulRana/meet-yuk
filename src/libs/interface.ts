@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface IPlayer {
   url?: any;
   muted?: boolean;
@@ -14,4 +16,8 @@ export interface IBottom extends IPlayer {
 
 export interface ICopySection {
   roomId?:string;
+}
+
+export interface ILayout {
+  children: ReactNode;
 }
