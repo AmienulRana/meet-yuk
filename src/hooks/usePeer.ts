@@ -12,7 +12,7 @@ const usePeer = () => {
 
     useEffect(() => {
         // console.log('perr');
-        if (isPeerSet.current) return;
+        if (isPeerSet.current || !roomId || !socket) return;
         isPeerSet.current = true;
         let myPeer;
         (async function initPeer() {
@@ -21,11 +21,11 @@ const usePeer = () => {
             
             myPeer.on('open', (id) => {
                 console.log(`your peer id is ${id}`)
-                // setMyId(id)
-                // socket?.emit('join-room', roomId, id)
+                setMyId(id)
+                socket?.emit('join-room', roomId, id)
             })
         })()
-    }, [])
+    }, [roomId, socket])
 
     return {
         peer,
