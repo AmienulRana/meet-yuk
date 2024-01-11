@@ -8,6 +8,8 @@ import { useRouter } from "next/router";
 import { cloneDeep } from "lodash";
 import { useEffect, useState } from "react";
 import CopySection from "@/components/CopySection";
+import Logo from "@/components/Logo";
+import Layout from "@/components/Layout";
 
 export default function Room() {
   const socket = useSocket();
@@ -134,7 +136,7 @@ export default function Room() {
   }, [myId, stream]);
 
   return (
-    <div>
+    <Layout>
       <div
         className="absolute w-9/12 left-0 right-0 mx-auto top-[20px] bottom-[50px]"
         style={{ height: "calc(100vh - 20px - 100px)" }}
@@ -175,6 +177,6 @@ export default function Room() {
         toggleVideo={toggleVideo}
         leaveRoom={leaveRoom}
       />
-    </div>
+    </Layout>
   );
 }
