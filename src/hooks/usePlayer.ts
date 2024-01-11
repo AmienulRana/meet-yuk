@@ -16,7 +16,9 @@ const usePlayer = (myId: string, roomId: string, peer:any) => {
     const leaveRoom = () => {
         socket?.emit('user-leave', myId, roomId)
         peer?.disconnect();
-        router.push('/')
+        // router.push('/')
+        window.location.href = '/'
+        // router.push('/home', undefined, { shallow: true, : true });
     }
 
     const toggleAudio = () => {
