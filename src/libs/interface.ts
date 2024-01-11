@@ -11,3 +11,7 @@ export interface IBottom extends IPlayer {
   toggleVideo: () => void;
   leaveRoom?: () => void;
 }
+
+export interface ICopySection {
+  roomId?:string;
+}
