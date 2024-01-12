@@ -15,7 +15,7 @@ export default function Room() {
   const socket = useSocket();
   const { roomId } = useRouter().query;
   const { peer, myId } = usePeer();
-  const { stream } = useMediaStream();
+  const { stream, handleOpenCamera } = useMediaStream();
   const {
     players,
     setPlayers,
@@ -74,7 +74,6 @@ export default function Room() {
       console.log(`user with id ${userId} toggled video`);
       setPlayers((prev: any) => {
         const copy = cloneDeep(prev);
-        console.log(copy);
         copy[userId].playing = !copy?.[userId]?.playing;
         return { ...copy };
       });
@@ -87,6 +86,7 @@ export default function Room() {
       delete playersCopy[userId];
       setPlayers(playersCopy);
     }
+
     socket.on("user-toggle-audio", handleToggleAudio);
     socket.on("user-toggle-video", handleToggleVideo);
     socket.on("user-leave", handleUserLeave);
@@ -95,15 +95,16 @@ export default function Room() {
       socket.off("user-toggle-video", handleToggleVideo);
       socket.off("user-leave", handleUserLeave);
     };
+
   }, [setPlayers, users, socket]);
 
   useEffect(() => {
     if (!peer || !stream) return;
-    peer.on("call", (call: any) => {
+    peer?.on("call", (call: any) => {
       const { peer: callerId } = call;
-      call.answer(stream);
+      call?.answer(stream);
 
-      call.on("stream", (incomingStream: string) => {
+      call?.on("stream", (incomingStream: string) => {
         console.log(`incoming stream from ${callerId}`);
         setPlayers((prev: any) => ({
           ...prev,
@@ -123,6 +124,7 @@ export default function Room() {
   }, [peer, stream]);
 
   useEffect(() => {
+    console.log(stream);
     if (!stream || !myId) return;
     console.log(`setting my stream ${myId}`);
     setPlayers((prev: any) => ({
@@ -130,15 +132,16 @@ export default function Room() {
       [myId]: {
         url: stream,
         muted: true,
-        playing: true,
+        playing: false,
       },
     }));
   }, [myId, stream]);
 
+
   return (
     <Layout>
       <div
-        className="absolute w-9/12 left-0 right-0 mx-auto top-[20px] bottom-[50px]"
+        className="w-9/12 md:px-10 px-4 py-3 h-full bg-lightgray"
         style={{ height: "calc(100vh - 20px - 100px)" }}
       >
         {playerHighlighted && (
@@ -168,7 +171,6 @@ export default function Room() {
           );
         })}
       </div>
-      <CopySection roomId={roomId as string}/>
 
       <Bottom
         muted={playerHighlighted?.muted}

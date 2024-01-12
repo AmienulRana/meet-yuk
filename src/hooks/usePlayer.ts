@@ -1,14 +1,15 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import { cloneDeep } from 'lodash'
 import { useRouter } from 'next/router'
 import { useSocket } from '@/context/SocketContext'
+import useMediaStream from './useMediaStream'
 
 const usePlayer = (myId: string, roomId: string, peer:any) => {
-    const socket = useSocket()
+    const socket = useSocket();
+    const {handleOpenCamera} = useMediaStream()
     const [players, setPlayers] = useState<any>({})
-    const router = useRouter()
     const playersCopy = cloneDeep(players)
-    const playerHighlighted = playersCopy[myId]
+    let playerHighlighted = playersCopy[myId];
     delete playersCopy[myId]
 
     const nonHighlightedPlayers = playersCopy
@@ -16,9 +17,7 @@ const usePlayer = (myId: string, roomId: string, peer:any) => {
     const leaveRoom = () => {
         socket?.emit('user-leave', myId, roomId)
         peer?.disconnect();
-        // router.push('/')
         window.location.href = '/'
-        // router.push('/home', undefined, { shallow: true, : true });
     }
 
     const toggleAudio = () => {
@@ -30,15 +29,15 @@ const usePlayer = (myId: string, roomId: string, peer:any) => {
         socket?.emit('user-toggle-audio', myId, roomId)
     }
 
-    const toggleVideo = () => {
-        setPlayers((prev: any) => {
-            const copy = cloneDeep(prev)
-            copy[myId].playing = !copy?.[myId]?.playing
-            return {...copy}
-        })
+    const toggleVideo = async () => {
+            setPlayers((prev: any) => {
+                const copy = cloneDeep(prev)
+                copy[myId].playing = !copy?.[myId]?.playing
+                return {...copy}
+            })
+
         socket?.emit('user-toggle-video', myId, roomId)
     }
-
     return {players, setPlayers, playerHighlighted, nonHighlightedPlayers, toggleAudio, toggleVideo, leaveRoom}
 }
 
