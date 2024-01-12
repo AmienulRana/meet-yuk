@@ -3,7 +3,7 @@ import Logo from "./Logo";
 
 export default function NavbarRoom(){
     return (
-        <div className="flex  items-center">
+        <div className="flex md:px-10 px-4 items-center">
         <div className="border-r pr-10 py-2 border-gray-200">
           <Logo />
         </div>
