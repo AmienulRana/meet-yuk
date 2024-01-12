@@ -17,6 +17,7 @@ const config: Config = {
         primary: '#0060FF',
         lightblue: '#DFEBFF',
         graytext: '#acacac',
+        lightgray: "#f1f0f0",
         prime: '#212529',
         secondary: '#343a40',
         buttonPrimary: '#d90429'
