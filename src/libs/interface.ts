@@ -9,8 +9,8 @@ export interface IPlayer {
 }
 
 export interface IBottom extends IPlayer {
-  toggleAudio: () => void;
-  toggleVideo: () => void;
+  toggleAudio?: () => void;
+  toggleVideo?: () => void;
   leaveRoom?: () => void;
 }
 
