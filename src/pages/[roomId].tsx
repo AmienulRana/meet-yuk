@@ -11,6 +11,7 @@ import CopySection from "@/components/CopySection";
 import Logo from "@/components/Logo";
 import Layout from "@/components/Layout";
 import 'react-perfect-scrollbar/dist/css/styles.css';
+import {Participants} from "@/components/participants";
 
 export default function Room() {
   const socket = useSocket();
@@ -136,12 +137,10 @@ export default function Room() {
     }));
   }, [myId, stream]);
 
-  useEffect(() => {
-    console.log(players);
-  }, [players]);
-
   return (
     <Layout>
+
+      <section className="flex">
       <div
         className="w-9/12 md:px-10 px-4 py-3 min-h-screen bg-lightgray"
         style={{ height: "calc(100vh - 20px - 100px)" }}
@@ -155,7 +154,7 @@ export default function Room() {
           />
         )}
         <div className="flex gap-12 custom-scrollbar flex-nowrap whitespace-nowrap overflow-x-auto">
-          
+          {/* {[1, 2, 3, 4, 5, 6, 7, 8].map(() => ( */}
             <>
               {Object.keys(nonHighlightedPlayers).map((playerId) => {
                 const { url, muted, playing } = nonHighlightedPlayers[playerId];
@@ -171,15 +170,20 @@ export default function Room() {
               })}
             </>
         </div>
-      </div>
-
       <Bottom
         muted={playerHighlighted?.muted}
         playing={playerHighlighted?.playing}
         toggleAudio={toggleAudio}
         toggleVideo={toggleVideo}
         leaveRoom={leaveRoom}
-      />
+        />
+      </div>
+      <div className="flex-1 min-h-auto bg-gray-100  border-l-2">
+      <Participants players={players} />
+
+      </div>
+
+      </section>
     </Layout>
   );
 }
