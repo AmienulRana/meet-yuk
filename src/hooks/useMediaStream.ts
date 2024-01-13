@@ -11,6 +11,7 @@ const useMediaStream = () => {
                 audio: true,
                 video: true
             })
+            console.log('stream from useMedia', stream)
             setState(stream);
             return stream;
         } catch (e) {
@@ -26,7 +27,7 @@ const useMediaStream = () => {
 
     return {
         stream: state,
-        handleOpenCamera: initStream
+        handleOpenCamera: initStream,
     }
 }
 
