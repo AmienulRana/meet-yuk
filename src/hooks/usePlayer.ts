@@ -30,9 +30,11 @@ const usePlayer = (myId: string, roomId: string, peer:any) => {
     }
 
     const toggleVideo = async () => {
-            setPlayers((prev: any) => {
-                const copy = cloneDeep(prev)
-                copy[myId].playing = !copy?.[myId]?.playing
+        setPlayers((prev: any) => {
+            const copy = cloneDeep(prev)
+            copy[myId].playing = !copy?.[myId]?.playing
+            // const newStream = handleOpenCamera({video: copy?.[myId]?.playing ? false : true });
+            // setNewStream(await newStream)
                 return {...copy}
             })
 

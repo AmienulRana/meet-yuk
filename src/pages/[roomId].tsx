@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import CopySection from "@/components/CopySection";
 import Logo from "@/components/Logo";
 import Layout from "@/components/Layout";
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 export default function Room() {
   const socket = useSocket();
@@ -23,7 +24,7 @@ export default function Room() {
     nonHighlightedPlayers,
     toggleAudio,
     toggleVideo,
-    leaveRoom
+    leaveRoom,
   } = usePlayer(myId, roomId as string, peer);
 
   const [users, setUsers] = useState<any[]>([]);
@@ -42,14 +43,14 @@ export default function Room() {
           [newUser]: {
             url: incomingStream,
             muted: true,
-            playing: true,
+            playing: false,
           },
         }));
 
         setUsers((prev) => ({
           ...prev,
-          [newUser]: call
-        }))
+          [newUser]: call,
+        }));
       });
     };
     socket?.on("user-connected", handleUserConnected);
@@ -81,11 +82,11 @@ export default function Room() {
 
     const handleUserLeave = (userId: any) => {
       console.log(`user ${userId} is leaving the room`);
-      users?.[userId]?.close()
+      users?.[userId]?.close();
       const playersCopy = cloneDeep(players);
       delete playersCopy[userId];
       setPlayers(playersCopy);
-    }
+    };
 
     socket.on("user-toggle-audio", handleToggleAudio);
     socket.on("user-toggle-video", handleToggleVideo);
@@ -95,7 +96,6 @@ export default function Room() {
       socket.off("user-toggle-video", handleToggleVideo);
       socket.off("user-leave", handleUserLeave);
     };
-
   }, [setPlayers, users, socket]);
 
   useEffect(() => {
@@ -111,20 +111,19 @@ export default function Room() {
           [callerId]: {
             url: incomingStream,
             muted: true,
-            playing: true,
+            playing: false,
           },
         }));
 
         setUsers((prev) => ({
           ...prev,
-          [callerId]: call
-        }))
+          [callerId]: call,
+        }));
       });
     });
   }, [peer, stream]);
 
   useEffect(() => {
-    console.log(stream);
     if (!stream || !myId) return;
     console.log(`setting my stream ${myId}`);
     setPlayers((prev: any) => ({
@@ -137,11 +136,14 @@ export default function Room() {
     }));
   }, [myId, stream]);
 
+  useEffect(() => {
+    console.log(players);
+  }, [players]);
 
   return (
     <Layout>
       <div
-        className="w-9/12 md:px-10 px-4 py-3 h-full bg-lightgray"
+        className="w-9/12 md:px-10 px-4 py-3 min-h-screen bg-lightgray"
         style={{ height: "calc(100vh - 20px - 100px)" }}
       >
         {playerHighlighted && (
@@ -152,24 +154,23 @@ export default function Room() {
             isActive
           />
         )}
-      </div>
-
-      <div
-        className=" absolute flex flex-col overflow-y-auto w-[200px] right-[20px] top-5"
-        style={{ height: " calc(100vh - 20px)" }}
-      >
-        {Object.keys(nonHighlightedPlayers).map((playerId) => {
-          const { url, muted, playing } = nonHighlightedPlayers[playerId];
-          return (
-            <Player
-              key={playerId}
-              url={url}
-              muted={muted}
-              playing={playing}
-              isActive={false}
-            />
-          );
-        })}
+        <div className="flex gap-12 custom-scrollbar flex-nowrap whitespace-nowrap overflow-x-auto">
+          
+            <>
+              {Object.keys(nonHighlightedPlayers).map((playerId) => {
+                const { url, muted, playing } = nonHighlightedPlayers[playerId];
+                return (
+                  <Player
+                    key={playerId}
+                    url={url}
+                    muted={muted}
+                    playing={playing}
+                    isActive={false}
+                  />
+                );
+              })}
+            </>
+        </div>
       </div>
 
       <Bottom
