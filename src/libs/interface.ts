@@ -21,3 +21,8 @@ export interface ICopySection {
 export interface ILayout {
   children: ReactNode;
 }
+
+export interface IAvatar {
+  text:string;
+  className?:string;
+}
