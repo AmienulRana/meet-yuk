@@ -10,8 +10,9 @@ import { useEffect, useState } from "react";
 import CopySection from "@/components/CopySection";
 import Logo from "@/components/Logo";
 import Layout from "@/components/Layout";
-import 'react-perfect-scrollbar/dist/css/styles.css';
-import {Participants} from "@/components/participants";
+import "react-perfect-scrollbar/dist/css/styles.css";
+import { Participants } from "@/components/participants";
+import Avatar from "@/components/Avatar";
 
 export default function Room() {
   const socket = useSocket();
@@ -139,22 +140,21 @@ export default function Room() {
 
   return (
     <Layout>
-
       <section className="flex">
-      <div
-        className="w-9/12 md:px-10 px-4 py-3 min-h-screen bg-lightgray"
-        style={{ height: "calc(100vh - 20px - 100px)" }}
-      >
-        {playerHighlighted && (
-          <Player
-            url={playerHighlighted?.url}
-            muted={playerHighlighted?.muted}
-            playing={playerHighlighted?.playing}
-            isActive
-          />
-        )}
-        <div className="flex gap-12 custom-scrollbar flex-nowrap whitespace-nowrap overflow-x-auto">
-          {/* {[1, 2, 3, 4, 5, 6, 7, 8].map(() => ( */}
+        <div
+          className="w-9/12 md:px-10 px-4 py-3 min-h-screen bg-lightgray"
+          style={{ height: "calc(100vh - 20px - 100px)" }}
+        >
+          {playerHighlighted && (
+            <Player
+              url={playerHighlighted?.url}
+              muted={playerHighlighted?.muted}
+              playing={playerHighlighted?.playing}
+              isActive
+            />
+          )}
+          <div className="flex gap-12 custom-scrollbar flex-nowrap whitespace-nowrap overflow-x-auto">
+            {/* {[1, 2, 3, 4, 5, 6, 7, 8].map(() => ( */}
             <>
               {Object.keys(nonHighlightedPlayers).map((playerId) => {
                 const { url, muted, playing } = nonHighlightedPlayers[playerId];
@@ -169,20 +169,65 @@ export default function Room() {
                 );
               })}
             </>
+          </div>
+          <Bottom
+            muted={playerHighlighted?.muted}
+            playing={playerHighlighted?.playing}
+            toggleAudio={toggleAudio}
+            toggleVideo={toggleVideo}
+            leaveRoom={leaveRoom}
+          />
         </div>
-      <Bottom
-        muted={playerHighlighted?.muted}
-        playing={playerHighlighted?.playing}
-        toggleAudio={toggleAudio}
-        toggleVideo={toggleVideo}
-        leaveRoom={leaveRoom}
-        />
-      </div>
-      <div className="flex-1 min-h-auto bg-gray-100  border-l-2">
-      <Participants players={players} />
-
-      </div>
-
+        <div className="flex-1 min-h-auto bg-gray-100  border-l-2">
+          <Participants players={players} />
+          <div className="mt-4">
+            <h2 className="text-lg font-semibold bg-white px-5 py-3">Chats</h2>
+            <div className="px-5 py-4">
+              <div className="flex justify-center w-full items-start gap-3">
+                <Avatar text="Amineul" />
+                <p className="flex-1 bg-white px-3 py-2 rounded-lg text-sm">
+                  <span className="block text-xs text-graytext">
+                    Amienul Rana
+                  </span>
+                  Good afternoon, everyone.
+                </p>
+                <span className="text-xs translate-y-2 text-gray-400">
+                  11:01 AM
+                </span>
+              </div>
+              <div className="flex justify-center mt-3 w-full items-start gap-3">
+                <Avatar text="Amineul" className="opacity-0 invisible" />
+                <p className="flex-1 bg-white px-3 py-2 rounded-lg text-sm">
+                  We will start this meeting
+                </p>
+                <span className="text-xs opacity-0 invisible translate-y-2 text-gray-400">
+                  11:01 AM
+                </span>
+              </div>
+              <div className="flex mt-3 justify-center w-full items-start gap-3">
+                <Avatar text="Joshua" />
+                <p className="flex-1 bg-white px-3 py-2 rounded-lg text-sm">
+                  <span className="block text-xs text-graytext">
+                  Joshua Abraham
+                  </span>
+                  Yes, Let’s start this meeting
+                </p>
+                <span className="text-xs translate-y-2 text-gray-400">
+                  11:02 AM
+                </span>
+              </div>
+              <div className="flex justify-center mt-3 w-full items-start gap-3">
+                <Avatar text="Amineul" />
+                <p className="flex-1 bg-white px-3 py-2 rounded-lg text-sm">
+                Today, we are here to discuss last week’s sales.
+                </p>
+                <span className="text-xs translate-y-2 text-gray-400">
+                  12:04 AM
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </Layout>
   );
