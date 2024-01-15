@@ -27,10 +27,10 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponseWithSocket) => {
       io.on("connection", (socket) => {
         console.log("server is connected");
 
-        socket.on("join-room", (roomId, userId) => {
+        socket.on("join-room", (roomId, userId, username) => {
           console.log(`a new user ${userId} joined room ${roomId}`);
           socket.join(roomId);
-          socket.broadcast.to(roomId).emit("user-connected", userId);
+          socket.broadcast.to(roomId).emit("user-connected", {userId, username});
         });
 
         socket.on("user-toggle-audio", (userId, roomId) => {
