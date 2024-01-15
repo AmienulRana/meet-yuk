@@ -18,7 +18,7 @@ const Bottom = (props: IBottom) => {
   return (
     <div
       className={
-        "fixed w-9/12 flex justify-center items-center gap-10 bg-white border-r border-lightgray py-3 bottom-0 left-0 right-0"
+        "fixed w-9/12 2xl:w-[73.9%] h-[80px] flex justify-center items-center gap-10 bg-white border-r border-lightgray py-3 bottom-0 left-0"
       }
     >
       {muted ? (
