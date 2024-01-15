@@ -2,13 +2,16 @@ import { useSocket } from "@/context/SocketContext";
 import { useRouter } from "next/router"
 
 import  { useState, useEffect, useRef } from  "react"
+import { useUsername } from "./useUsername";
 
 const usePeer = () => {
     const socket = useSocket()
     const roomId = useRouter().query.roomId;
     const [peer, setPeer] = useState<any>(null)
-    const [myId, setMyId] = useState('')
-    const isPeerSet = useRef(false)
+    const [myId, setMyId] = useState('');
+    const isPeerSet = useRef(false);
+
+    const {username} = useUsername();
 
     useEffect(() => {
         // console.log('perr');
@@ -22,7 +25,7 @@ const usePeer = () => {
             myPeer.on('open', (id) => {
                 console.log(`your peer id is ${id}`)
                 setMyId(id)
-                socket?.emit('join-room', roomId, id)
+                socket?.emit('join-room', roomId, {userId:id, username})
             })
         })()
     }, [roomId, socket])

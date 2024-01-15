@@ -13,6 +13,9 @@ import Layout from "@/components/Layout";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import { Participants } from "@/components/participants";
 import Avatar from "@/components/Avatar";
+import Image from "next/image";
+import { IUser } from "@/libs/interface";
+import { useUsername } from "@/hooks/useUsername";
 
 export default function Room() {
   const socket = useSocket();
@@ -30,11 +33,15 @@ export default function Room() {
   } = usePlayer(myId, roomId as string, peer);
 
   const [users, setUsers] = useState<any[]>([]);
+  const {username} = useUsername();
 
   useEffect(() => {
     if (!socket || !peer || !stream) return;
-    const handleUserConnected = (newUser: string) => {
+
+    const handleUserConnected = ({userId: newUser, username}: IUser) => {
       console.log(`user connected in room with userId ${newUser}`);
+
+      console.log(username);
 
       const call = peer.call(newUser, stream);
 
@@ -46,6 +53,7 @@ export default function Room() {
             url: incomingStream,
             muted: true,
             playing: false,
+            username
           },
         }));
 
@@ -64,7 +72,7 @@ export default function Room() {
 
   useEffect(() => {
     if (!socket) return;
-    const handleToggleAudio = (userId: string) => {
+    const handleToggleAudio = (userId:string) => {
       console.log(`user with id ${userId} toggled audio`);
       setPlayers((prev: any) => {
         const copy = cloneDeep(prev);
@@ -82,10 +90,11 @@ export default function Room() {
       });
     };
 
-    const handleUserLeave = (userId: any) => {
+    const handleUserLeave = (userId: string) => {
       console.log(`user ${userId} is leaving the room`);
-      users?.[userId]?.close();
+      users?.[userId as any]?.close();
       const playersCopy = cloneDeep(players);
+      console.log(playersCopy);
       delete playersCopy[userId];
       setPlayers(playersCopy);
     };
@@ -108,14 +117,15 @@ export default function Room() {
 
       call?.on("stream", (incomingStream: string) => {
         console.log(`incoming stream from ${callerId}`);
-        setPlayers((prev: any) => ({
-          ...prev,
-          [callerId]: {
-            url: incomingStream,
-            muted: true,
-            playing: false,
-          },
-        }));
+        setPlayers((prev: any) => {
+          return {
+            ...prev,
+            [callerId]: {
+              ...prev[callerId],
+              url: incomingStream,
+            },
+          };
+        });
 
         setUsers((prev) => ({
           ...prev,
@@ -134,13 +144,18 @@ export default function Room() {
         url: stream,
         muted: true,
         playing: false,
+        username,
       },
     }));
-  }, [myId, stream]);
+  }, [myId, stream, username]);
+
+  useEffect(() => {
+    console.log('all players', players)
+  }, [players])
 
   return (
     <Layout>
-      <section className="flex">
+      <section className="flex relative">
         <div
           className="w-9/12 md:px-10 px-4 py-3 min-h-screen bg-lightgray"
           style={{ height: "calc(100vh - 20px - 100px)" }}
@@ -178,7 +193,7 @@ export default function Room() {
             leaveRoom={leaveRoom}
           />
         </div>
-        <div className="flex-1 min-h-auto bg-gray-100  border-l-2">
+        <div className="flex-1 relative min-h-auto bg-gray-100  border-l-2">
           <Participants players={players} />
           <div className="mt-4">
             <h2 className="text-lg font-semibold bg-white px-5 py-3">Chats</h2>
@@ -224,6 +239,15 @@ export default function Room() {
                 <span className="text-xs translate-y-2 text-gray-400">
                   12:04 AM
                 </span>
+              </div>
+            </div>
+
+            <div className="bg-white absolute bottom-0 left-0 w-full h-[80px] py-3 px-4">
+              <div className="relative">
+                <input className="bg-gray-100 w-full px-5 py-3 outline-0 rounded-full" placeholder="Type Something..." />
+                <button className="absolute top-1/2 -translate-y-[50%] right-5 ">
+                  <Image src="/send-message.svg" alt="send message icon"  width={35} height={35}/>
+                </button>
               </div>
             </div>
           </div>
