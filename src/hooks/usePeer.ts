@@ -14,7 +14,7 @@ const usePeer = () => {
     const {username} = useUsername();
 
     useEffect(() => {
-        // console.log('perr');
+
         if (isPeerSet.current || !roomId || !socket) return;
         isPeerSet.current = true;
         let myPeer;
@@ -22,11 +22,22 @@ const usePeer = () => {
             myPeer = new (await import('peerjs')).default()
             setPeer(myPeer)
             
-            myPeer.on('open', (id) => {
-                console.log(`your peer id is ${id}`)
-                setMyId(id)
-                socket?.emit('join-room', roomId, {userId:id, username})
-            })
+            const getMyPeer = sessionStorage.getItem('my-id');
+
+            if(!getMyPeer){
+                myPeer.on('open', (id) => {
+                    console.log(`your peer id is ${id}`)
+                    setMyId(id);
+                    sessionStorage.setItem('my-id', id);
+                    socket?.emit('join-room', roomId, {userId:id, username});
+                    // socket?.emit('join-chat', roomId, username);
+                })
+            }else{ 
+                console.log(`your peer id is ${getMyPeer}`)
+                    setMyId(getMyPeer);
+                    sessionStorage.setItem('my-id', getMyPeer);
+                    socket?.emit('join-room', roomId, {userId:getMyPeer, username});
+            }
         })()
     }, [roomId, socket])
 
