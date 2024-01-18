@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash'
 import { useRouter } from 'next/router'
 import { useSocket } from '@/context/SocketContext'
 import useMediaStream from './useMediaStream'
+import deleteUserService from '@/services/users'
 
 const usePlayer = (myId: string, roomId: string, peer:any) => {
     const socket = useSocket();
@@ -15,6 +16,7 @@ const usePlayer = (myId: string, roomId: string, peer:any) => {
     const nonHighlightedPlayers = playersCopy
 
     const leaveRoom = () => {
+        deleteUserService(myId)
         socket?.emit('user-leave', myId, roomId)
         peer?.disconnect();
         window.location.href = '/'
