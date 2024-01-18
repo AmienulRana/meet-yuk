@@ -18,6 +18,7 @@ const usePlayer = (myId: string, roomId: string, peer:any) => {
         socket?.emit('user-leave', myId, roomId)
         peer?.disconnect();
         window.location.href = '/'
+        sessionStorage.removeItem('my-id');
     }
 
     const toggleAudio = () => {
