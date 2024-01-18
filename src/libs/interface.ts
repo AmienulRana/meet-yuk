@@ -7,6 +7,7 @@ export interface IPlayer {
   isActive?: boolean;
   playerId?: string;
   username?:string;
+  color?:string;
 }
 
 export interface IBottom extends IPlayer {
@@ -26,6 +27,7 @@ export interface ILayout {
 export interface IAvatar {
   text:string;
   className?:string;
+  color?:string;
 }
 
 export interface IUser {
