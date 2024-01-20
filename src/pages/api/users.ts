@@ -20,17 +20,23 @@ export default async function room(req: NextApiRequest, res: NextApiResponse) {
         return res.status(500).json({message:'Failed to create new user'});
     }
   } else if(req.method === 'PUT') {
-    // try {
-    //     const findRoom = await Room.findById({_id:  req.query?.id});
-    //     console.log(findRoom);
-    //     return res.status(200).json({message: `Find room with id ${req.query?.id}`, room: findRoom})        
-    // } catch (error: any) {
-    //     return res.status(500).json({message:'Failed to find room'});
-    // }
-    // Handle any other HTTP method
+    try {
+        const { muted, playing, myId } = req.query;
+        const document = await Users.findOne({ myId: myId });
+        if(muted){
+          const updateMic = await Users.updateOne({myId: req.query?.myId}, {$set: { muted: !document?.muted}});
+          console.log(updateMic);
+        }else if(playing){
+          const updateStream = await Users.updateOne({myId: req.query?.myId}, {$set: { playing: !document?.playing}});
+          console.log(updateStream);
+        }
+        return res.status(200).json({message: `Successfully Toggle your stream`})        
+    } catch (error: any) {
+        return res.status(500).json({message:'Failed to find room'});
+    }
   }else if(req.method === 'DELETE'){
     try {
-      const deleteUser = await Users.findOneAndDelete({myId: req.query?.myId});
+      const deleteUser = await Users.deleteOne({myId: req.query?.myId});
       console.log(deleteUser);
       res.status(200).json({message: 'Successfully Delete user'});
     } catch (error) {
