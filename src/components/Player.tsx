@@ -6,7 +6,7 @@ import styles from "@/component/Player/index.module.css";
 import { IPlayer } from "@/libs/interface";
 
 const Player = (props: IPlayer) => {
-  const { url, muted, playing, isActive } = props;
+  const { url, muted, playing, isActive, username } = props;
 
   const config = {
     file: {
@@ -45,7 +45,7 @@ const Player = (props: IPlayer) => {
       )}
       <div className={`flex justify-between items-center absolute w-full ${isActive ? 'bottom-5 left-5 max-w-[250px]' : 'bottom-2 left-2 max-w-[100px]'}`}>
         <p className="bg-[rgba(0,0,0,.3)] px-2 py-1 truncate text-xs text-white rounded-full">
-          Joshep Adam
+          {username}
         </p>
       </div>
 
