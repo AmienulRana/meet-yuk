@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactElement, ReactNode } from "react";
 
 export interface IPlayer {
   url?: any;
@@ -33,4 +33,9 @@ export interface IAvatar {
 export interface IUser {
   username?:string;
   userId:string;
+}
+
+export interface IButton extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'outline' | 'background';
+  size?: 'small' | 'large';
 }
