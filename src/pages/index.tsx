@@ -107,10 +107,8 @@ export default function Home() {
                 <p className="bg-[rgba(0,0,0,.7)] px-2 rounded-lg py-1 text-sm text-white">
                   Alice Wong
                 </p>
-                <MicOff
-                  className={
-                    "text-white  rounded-full  p-1 bg-buttonPrimary"
-                  }
+                <Mic
+                  className={"text-white rounded-full p-1 bg-primary"}
                   size={24}
                 />
               </div>
@@ -127,10 +125,8 @@ export default function Home() {
                 <p className="bg-[rgba(0,0,0,.7)] px-2 rounded-lg py-1 text-sm text-white">
                   Adam Joseph
                 </p>
-                <Mic
-                  className={
-                    "text-white rounded-full p-1 bg-primary"
-                  }
+                <MicOff
+                  className={"text-white  rounded-full  p-1 bg-buttonPrimary"}
                   size={24}
                 />
               </div>
@@ -138,6 +134,50 @@ export default function Home() {
           </div>
         </div>
       </Container>
+      <Container className="mt-20">
+        <p className="text-center mb-4 text-gray-400">
+          Used daily by more than{" "}
+          <span className="font-bold text-primary">200+</span> Company
+        </p>
+        <div className="border flex px-5 justify-between border-gray-300 rounded-md mx-auto lg:w-1/2 md:w-[80%] w-full">
+          <Image
+            src={"/images/company/upwork.png"}
+            height={80}
+            width={80}
+            alt="upwork"
+            className="object-contain"
+          />
+          <Image
+            src={"/images/company/microsoft.png"}
+            height={80}
+            width={80}
+            alt="microsoft"
+            className="object-contain"
+          />
+          <Image
+            src={"/images/company/netflix.png"}
+            height={80}
+            width={80}
+            alt="netflix"
+            className="object-contain"
+          />
+          <Image
+            src={"/images/company/slack.png"}
+            height={80}
+            width={80}
+            alt="slack"
+            className="object-contain"
+          />
+          <Image
+            src={"/images/company/fiverr.png"}
+            height={80}
+            width={80}
+            alt="fiverr"
+            className="object-contain"
+          />
+        </div>
+      </Container>
+
       <div
         className={
           "w-4/12 mx-auto p-2 border border-white rounded mt-8 text-white flex flex-col items-center"
