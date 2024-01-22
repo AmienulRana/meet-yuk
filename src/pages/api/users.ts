@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import Users from '@/models/users';
 import { User } from 'lucide-react';
+import Room from '@/models/room';
 
 export default async function room(req: NextApiRequest, res: NextApiResponse) {
     await connectMongo();
@@ -36,8 +37,12 @@ export default async function room(req: NextApiRequest, res: NextApiResponse) {
     }
   }else if(req.method === 'DELETE'){
     try {
+      const document = await Users.findOne({ myId: req.query?.myId });
+      const totalUserRoom = await Users.find({roomId: document?.roomId});
+      if(totalUserRoom?.length === 1){
+        const deleteRoom = await Room.deleteOne({_id: document.roomId});
+      }
       const deleteUser = await Users.deleteOne({myId: req.query?.myId});
-      console.log(deleteUser);
       res.status(200).json({message: 'Successfully Delete user'});
     } catch (error) {
       return res.status(500).json({message:'Failed to get all user'});
@@ -46,7 +51,6 @@ export default async function room(req: NextApiRequest, res: NextApiResponse) {
   else {
     try {
       const findAllUser = await Users.find({roomId: req.query?.roomId});
-      console.log(findAllUser);
       res.status(200).json(findAllUser);
     } catch (error) {
       return res.status(500).json({message:'Failed to get all user'});
