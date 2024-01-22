@@ -19,10 +19,12 @@ import { BsCameraVideoFill, BsChatLeftFill, BsStars } from "react-icons/bs";
 import { CardFeature } from "@/components/pages/home";
 import { TbScreenShare } from "react-icons/tb";
 import {Footer} from "@/components/footer";
-import { Modal } from "@/components/modal";
+import { Modal, ModalCreateRoom } from "@/components/modal";
 import Input from "@/components/Input";
 import useJoinModal from "@/hooks/useJoinRoomModal";
 import ModalJoinRoom from "@/components/modal/ModalJoinRoom";
+import useCreateModal from "@/hooks/useCreateRoomModal";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,27 +34,16 @@ export default function Home() {
   const [roomId, setRoomId] = useState("");
   const { username, setUsername } = useUsername();
 
+  const { onOpen } = useCreateModal()
+  const { onOpen: openJoinModal } = useJoinModal()
+
+
 
   const [loading, setIsLoading] = useState(false);
 
-  const createAndJoin = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axios.post("/api/room", { roomName });
-      const id = response?.data?.room?._id;
-      router.push(`/${id}`);
-    } catch (error) {
-      console.log(error);
-    }
-    setIsLoading(false);
-  };
+  
 
-  const joinRoom = () => {
-    if (roomId) router.push(`/${roomId}`);
-    else {
-      alert("Please provide a valid room id");
-    }
-  };
+ 
 
   useEffect(() => {}, []);
   return (
@@ -211,7 +202,7 @@ export default function Home() {
                 Start a meeting and our platform will automatically record video
                 and audio in real-time
               </p>
-              <Button size="small" variant="background" className="px-6 mt-5">
+              <Button onClick={onOpen} size="small" variant="background" className="px-6 mt-5">
                 Try Now
               </Button>
             </div>
@@ -274,7 +265,7 @@ export default function Home() {
                 effortlessly records video and audio during meetings. Stay in
                 sync effortlessly!
               </p>
-              <Button size="small" variant="background" className="px-6 mt-5">
+              <Button onClick={onOpen} size="small" variant="background" className="px-6 mt-5">
                 Try Now
               </Button>
             </div>
@@ -374,7 +365,7 @@ export default function Home() {
       <Container className="mt-24 text-center flex flex-col items-center">
             <h2 className="text-4xl font-semibold text-primary">Try callyuk today</h2>
             <p className="mt-5 md:w-[60%] mx-auto">With our advanced modern technology, your meetings are not just recorded - they&apos;re transformed into valuable insight and productivity boosters.</p>
-            <Button size="small" variant="background" className="my-5 px-7">
+            <Button onClick={openJoinModal} size="small" variant="background" className="my-5 px-7">
                 Start Now
             </Button>
             <div className="my-10 relative">
@@ -458,6 +449,9 @@ export default function Home() {
       
 
       <ModalJoinRoom />
+      <ModalCreateRoom />
+
+      <Toaster  />
       
       {/* <div
         className={
