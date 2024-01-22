@@ -1,8 +1,9 @@
 import axios from "axios";
 
-export function deleteUserService(myId: string) {
+export async function deleteUserService(myId: string) {
   try {
-    axios.delete(`/api/users?myId=${myId}`);
+    const response  = await axios.delete(`/api/users?myId=${myId}`);
+    return response?.data;
   } catch (error) {
     console.log(error);
   }
