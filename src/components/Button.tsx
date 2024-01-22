@@ -20,7 +20,7 @@ export default function Button({
   return (
     <button
       {...buttonProps}
-      className={`${theme[variant]} ${sizes[size]} ${className} px-3 py-1.5 rounded-full text-sm`}
+      className={`${theme[variant]} ${sizes[size]} ${className} px-4 py-2 rounded-full text-sm`}
     >
       {children}
     </button>
