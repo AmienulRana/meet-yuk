@@ -19,6 +19,10 @@ import { BsCameraVideoFill, BsChatLeftFill, BsStars } from "react-icons/bs";
 import { CardFeature } from "@/components/pages/home";
 import { TbScreenShare } from "react-icons/tb";
 import {Footer} from "@/components/footer";
+import { Modal } from "@/components/modal";
+import Input from "@/components/Input";
+import useJoinModal from "@/hooks/useJoinRoomModal";
+import ModalJoinRoom from "@/components/modal/ModalJoinRoom";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,6 +31,7 @@ export default function Home() {
   const [roomName, setRoomName] = useState("");
   const [roomId, setRoomId] = useState("");
   const { username, setUsername } = useUsername();
+
 
   const [loading, setIsLoading] = useState(false);
 
@@ -450,7 +455,10 @@ export default function Home() {
       </Container>
 
       <Footer />
+      
 
+      <ModalJoinRoom />
+      
       {/* <div
         className={
           "w-4/12 mx-auto p-2 border border-white rounded mt-8 text-white flex flex-col items-center"
