@@ -1,3 +1,4 @@
+import { background } from "@/components/pages/home/CardFeature";
 import { ReactElement, ReactNode } from "react";
 
 export interface IPlayer {
@@ -38,4 +39,11 @@ export interface IUser {
 export interface IButton extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'outline' | 'background';
   size?: 'small' | 'large';
+}
+
+export interface ICardFeature {
+  Icon: React.ElementType,
+  color: keyof typeof background;
+  title: string;
+  desc:string;
 }
