@@ -16,6 +16,15 @@ import Avatar from "@/components/Avatar";
 import Image from "next/image";
 import { IUser } from "@/libs/interface";
 import { useUsername } from "@/hooks/useUsername";
+import { Chats } from "@/components/chats";
+import axios from "axios";
+import { getRandomBrightColor } from "@/libs/utils";
+
+type IncomingStream = {
+  url: MediaStream,
+  call: any,
+  // userId: any
+}
 
 export default function Room() {
   const socket = useSocket();
@@ -33,29 +42,32 @@ export default function Room() {
   } = usePlayer(myId, roomId as string, peer);
 
   const [users, setUsers] = useState<any[]>([]);
-  const {username} = useUsername();
+  const { username } = useUsername();
+
+  const [incomingStream, setIncomingStream] = useState<IncomingStream>()
+
+  const router = useRouter();
 
   useEffect(() => {
     if (!socket || !peer || !stream) return;
 
-    const handleUserConnected = ({userId: newUser, username}: IUser) => {
-      console.log(`user connected in room with userId ${newUser}`);
+    const handleUserConnected = ({ userId: newUser, username }: IUser) => {
 
-      console.log(username);
+      const call = peer?.call(newUser, stream);
 
-      const call = peer.call(newUser, stream);
-
-      call.on("stream", (incomingStream: string) => {
+      call?.on("stream", async (incomingStream: any) => {
         console.log(`incoming stream from ${newUser}`);
-        setPlayers((prev: any) => ({
-          ...prev,
-          [newUser]: {
-            url: incomingStream,
-            muted: true,
-            playing: false,
-            username
-          },
-        }));
+
+        const users = await getAllUser(false);
+        setPlayers((prev: any) => {
+          return ({
+            ...prev,
+            [newUser]: {
+              ...users[newUser],
+              url: incomingStream,
+            },
+          })
+        });
 
         setUsers((prev) => ({
           ...prev,
@@ -68,11 +80,17 @@ export default function Room() {
     return () => {
       socket?.off("user-connected", handleUserConnected);
     };
-  }, [socket, peer, stream]);
+  }, [socket, peer, stream, players]);
+
 
   useEffect(() => {
+    if(!incomingStream?.call) return
+  }, [incomingStream, players])
+  
+  useEffect(() => {
     if (!socket) return;
-    const handleToggleAudio = (userId:string) => {
+
+    const handleToggleAudio = (userId: string) => {
       console.log(`user with id ${userId} toggled audio`);
       setPlayers((prev: any) => {
         const copy = cloneDeep(prev);
@@ -80,7 +98,14 @@ export default function Room() {
         return { ...copy };
       });
     };
-
+    const handleUserLeave = (userId: string) => {
+      console.log(`user ${userId} is leaving the room`);
+      users?.[userId as any]?.close();
+      const playersCopy = cloneDeep(players);
+      delete playersCopy[userId];
+      setPlayers(playersCopy);
+    };
+    
     const handleToggleVideo = (userId: string) => {
       console.log(`user with id ${userId} toggled video`);
       setPlayers((prev: any) => {
@@ -88,15 +113,6 @@ export default function Room() {
         copy[userId].playing = !copy?.[userId]?.playing;
         return { ...copy };
       });
-    };
-
-    const handleUserLeave = (userId: string) => {
-      console.log(`user ${userId} is leaving the room`);
-      users?.[userId as any]?.close();
-      const playersCopy = cloneDeep(players);
-      console.log(playersCopy);
-      delete playersCopy[userId];
-      setPlayers(playersCopy);
     };
 
     socket.on("user-toggle-audio", handleToggleAudio);
@@ -107,21 +123,29 @@ export default function Room() {
       socket.off("user-toggle-video", handleToggleVideo);
       socket.off("user-leave", handleUserLeave);
     };
-  }, [setPlayers, users, socket]);
+  }, [setPlayers, users, socket, players]);
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", () => {
+      confirm("apkah anda ingin meninggalkan halaman");
+    });
+  }, []);
 
   useEffect(() => {
     if (!peer || !stream) return;
     peer?.on("call", (call: any) => {
       const { peer: callerId } = call;
-      call?.answer(stream);
+      call.answer(stream);
 
-      call?.on("stream", (incomingStream: string) => {
-        console.log(`incoming stream from ${callerId}`);
+      call.on("stream", async (incomingStream: string) => {
+
+        const users = await getAllUser(false);
+        console.log(users);
         setPlayers((prev: any) => {
           return {
             ...prev,
             [callerId]: {
-              ...prev[callerId],
+              ...users[callerId],
               url: incomingStream,
             },
           };
@@ -137,21 +161,84 @@ export default function Room() {
 
   useEffect(() => {
     if (!stream || !myId) return;
-    console.log(`setting my stream ${myId}`);
-    setPlayers((prev: any) => ({
-      ...prev,
-      [myId]: {
-        url: stream,
-        muted: true,
-        playing: false,
-        username,
-      },
-    }));
+    
+
   }, [myId, stream, username]);
+  async function getAllUser(setAgainPlayer: boolean) {
+    try {
+      const response = await axios.get(`/api/users?roomId=${roomId}`);
+      // console.log(response?.data);
+      const newStructureRes: any[] = response?.data?.map((player: any) => ({
+        [player?.myId]: {
+          username: player?.username,
+          muted: player?.muted,
+          playing: player?.playing,
+          color: player?.color,
+        },
+      }));
+
+      // if(setAgainPlayer){
+      //   for (let i= 0; i < newStructureRes?.length; i++){
+      //     setPlayers({...players, ...Object.assign({}, ...newStructureRes)})
+      //   }
+      // }
+      // console.log('finishi')
+
+      return { ...Object.assign({}, ...newStructureRes) }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
-    console.log('all players', players)
+    // console.log(stream, myId);
+    if (!stream || !myId) return;
+
+    const setMyStream = async () => {
+      const users = await getAllUser(false);
+      setPlayers((prev: any) => {
+        return {
+          ...prev,
+          [myId]: {
+            ...users[myId],
+            url: stream,
+            muted: true,
+            playing: false,
+          },
+        };
+      });
+    }
+
+    setMyStream();
+
+
+    async function createNewUser() {
+      try {
+        const payload = {
+          muted: true,
+          playing: false,
+          username,
+          color: getRandomBrightColor(),
+          myId,
+          roomId,
+        };
+
+        await axios.post("/api/users", payload);
+        await getAllUser(true);
+        setMyStream()
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    createNewUser();
+
+  
+  }, [roomId, myId, stream]);
+
+  useEffect(() => {
+    // console.log(players);
   }, [players])
+
 
   return (
     <Layout>
@@ -162,6 +249,7 @@ export default function Room() {
         >
           {playerHighlighted && (
             <Player
+            username={playerHighlighted?.username}
               url={playerHighlighted?.url}
               muted={playerHighlighted?.muted}
               playing={playerHighlighted?.playing}
@@ -172,9 +260,10 @@ export default function Room() {
             {/* {[1, 2, 3, 4, 5, 6, 7, 8].map(() => ( */}
             <>
               {Object.keys(nonHighlightedPlayers).map((playerId) => {
-                const { url, muted, playing } = nonHighlightedPlayers[playerId];
+                const { url, muted, playing, username } = nonHighlightedPlayers[playerId];
                 return (
                   <Player
+                  username={username}
                     key={playerId}
                     url={url}
                     muted={muted}
@@ -195,62 +284,7 @@ export default function Room() {
         </div>
         <div className="flex-1 relative min-h-auto bg-gray-100  border-l-2">
           <Participants players={players} />
-          <div className="mt-4">
-            <h2 className="text-lg font-semibold bg-white px-5 py-3">Chats</h2>
-            <div className="px-5 py-4">
-              <div className="flex justify-center w-full items-start gap-3">
-                <Avatar text="Amineul" />
-                <p className="flex-1 bg-white px-3 py-2 rounded-lg text-sm">
-                  <span className="block text-xs text-graytext">
-                    Amienul Rana
-                  </span>
-                  Good afternoon, everyone.
-                </p>
-                <span className="text-xs translate-y-2 text-gray-400">
-                  11:01 AM
-                </span>
-              </div>
-              <div className="flex justify-center mt-3 w-full items-start gap-3">
-                <Avatar text="Amineul" className="opacity-0 invisible" />
-                <p className="flex-1 bg-white px-3 py-2 rounded-lg text-sm">
-                  We will start this meeting
-                </p>
-                <span className="text-xs opacity-0 invisible translate-y-2 text-gray-400">
-                  11:01 AM
-                </span>
-              </div>
-              <div className="flex mt-3 justify-center w-full items-start gap-3">
-                <Avatar text="Joshua" />
-                <p className="flex-1 bg-white px-3 py-2 rounded-lg text-sm">
-                  <span className="block text-xs text-graytext">
-                  Joshua Abraham
-                  </span>
-                  Yes, Let’s start this meeting
-                </p>
-                <span className="text-xs translate-y-2 text-gray-400">
-                  11:02 AM
-                </span>
-              </div>
-              <div className="flex justify-center mt-3 w-full items-start gap-3">
-                <Avatar text="Amineul" />
-                <p className="flex-1 bg-white px-3 py-2 rounded-lg text-sm">
-                Today, we are here to discuss last week’s sales.
-                </p>
-                <span className="text-xs translate-y-2 text-gray-400">
-                  12:04 AM
-                </span>
-              </div>
-            </div>
-
-            <div className="bg-white absolute bottom-0 left-0 w-full h-[80px] py-3 px-4">
-              <div className="relative">
-                <input className="bg-gray-100 w-full px-5 py-3 outline-0 rounded-full" placeholder="Type Something..." />
-                <button className="absolute top-1/2 -translate-y-[50%] right-5 ">
-                  <Image src="/send-message.svg" alt="send message icon"  width={35} height={35}/>
-                </button>
-              </div>
-            </div>
-          </div>
+          <Chats />
         </div>
       </section>
     </Layout>
