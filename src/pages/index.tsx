@@ -45,7 +45,10 @@ export default function Home() {
 
  
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    localStorage.removeItem('refresh');
+
+  }, []);
   return (
     <div>
       <NavbarHome />
@@ -207,8 +210,8 @@ export default function Home() {
               </Button>
             </div>
           </div>
-          <div className="relative bg-[rgb(234,253,251)] rounded-2xl ">
-            <div className="mx-auto md:w-[70%] w-[905] h-[300px]">
+          <div className="relative bg-[rgb(234,253,251)] h-[300px] md:h-auto rounded-2xl">
+            <div className="mx-auto h-full md:w-[70%] w-[905]">
               <div className="px-5 mt-5">
                 <div className="flex justify-center w-full items-start gap-3">
                   <Avatar text="Amineul" />
@@ -251,7 +254,7 @@ export default function Home() {
               </div>
             </div>
             <div
-              className="absolute flex justify-end flex-col text-black px-7 py-5 md:top-0 bottom-3 left-0 w-full h-full bg-[rgb(234,253,251)]"
+              className="absolute flex justify-end flex-col text-black px-7 py-5 top-0 left-0 w-full rounded-2xl h-full bg-[rgb(234,253,251)]"
               style={{
                 background:
                   "linear-gradient(0deg, rgba(234,253,251,1) 0%, rgba(250,251,251,0.4) 80%)",
