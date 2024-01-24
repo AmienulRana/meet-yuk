@@ -8,10 +8,7 @@ export default async function room(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
     try {
       const newChat = await new Chats({
-        // kontol: req.body?.myId,
-        // pepek: "asdsadasda",
         ...req.body,
-        // message: 'sdasdsada'
       });
       newChat?.save().then((res: any) => console.log(res));
       return res.status(200).json({ message: "Successfully send new message" });
