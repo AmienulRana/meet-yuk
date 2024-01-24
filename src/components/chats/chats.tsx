@@ -1,12 +1,13 @@
 import Image from "next/image";
 import Avatar from "../Avatar";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useSocket } from "@/context/SocketContext";
 import { useRouter } from "next/router";
 import { useUsername } from "@/hooks/useUsername";
 import { addChatService, getChatService } from "@/services/chats";
 import usePeer from "@/hooks/usePeer";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import moment from "moment";
 
 export default function Chats() {
   const [message, setMessage] = useState<string>("");
@@ -14,6 +15,9 @@ export default function Chats() {
   const { myId } = usePeer();
 
   const queryClient = useQueryClient();
+
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+
 
   // Queries
   const { data, refetch } = useQuery({
@@ -23,6 +27,7 @@ export default function Chats() {
       return data;
     },
     enabled: !!roomId,
+    refetchInterval: 10000000000000
   });
 
   // const handleSendMessage = () => {
@@ -30,6 +35,14 @@ export default function Chats() {
   //   socket?.emit("chat-message", roomId, username, message);
   //   setMessage("");
   // };
+
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight + 80;
+    }
+  };
+
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -39,27 +52,44 @@ export default function Chats() {
         userId: myId,
         message,
       });
-      refetch()
+      refetch();
 
       setMessage("");
+      scrollToBottom();
     } else alert("empty input");
   };
 
   useEffect(() => {
-    console.log(data);
-  }, [data])
+    scrollToBottom();
+  }, [data]);
   return (
     <div className="mt-4">
       <h2 className="text-lg font-semibold bg-white px-5 py-3">Chats</h2>
-      <div className="px-5 py-4">
-        <div className="flex justify-center w-full items-start gap-3">
-          <Avatar text="Amineul" />
-          <p className="flex-1 bg-white px-3 py-2 rounded-lg text-sm">
-            <span className="block text-xs text-graytext">Amienul Rana</span>
-            Good afternoon, everyone.
-          </p>
-          <span className="text-xs translate-y-2 text-gray-400">11:01 AM</span>
-        </div>
+      <div className="overflow-auto custom-scrollbar h-[350px] pb-[100px]" ref={messagesContainerRef}>
+        {data?.map((message: any, index:number) => {
+          const checkPrevChat = data?.[index]?.myId === data?.[index - 1]?.myId;
+          const checkPrevTime = moment(data?.[index]?.createdAt).format("HH:mm")  === moment(data?.[index - 1]?.createdAt).format("HH:mm");
+
+          const isTheSameTime = checkPrevTime && checkPrevChat ? 'opacity-0' : '';
+          console.log(checkPrevTime);
+          return (
+            <div
+              key={message?._id}
+              className={`px-5 flex justify-center w-full items-start gap-3 ${checkPrevTime && checkPrevChat ? 'py-1' : 'py-4'}`}
+            >
+              <Avatar text="Amineul" className={isTheSameTime}/>
+              <p className="flex-1 bg-white px-3 py-2 rounded-lg text-sm">
+                <span className={`block text-xs text-graytext ${isTheSameTime ? 'hidden' : ''}`}>
+                  Amienul Rana
+                </span>
+                {message?.message}
+              </p>
+              <span className={`text-xs translate-y-2 text-gray-400 ${isTheSameTime}`}>
+                {moment(message?.createdAt).format("HH:mm")}
+              </span>
+            </div>
+          );
+        })}
       </div>
 
       <div className="bg-white absolute bottom-0 left-0 w-full h-[80px] py-3 px-4">
