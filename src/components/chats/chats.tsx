@@ -1,33 +1,53 @@
 import Image from "next/image";
 import Avatar from "../Avatar";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useSocket } from "@/context/SocketContext";
 import { useRouter } from "next/router";
 import { useUsername } from "@/hooks/useUsername";
+import { addChatService, getChatService } from "@/services/chats";
+import usePeer from "@/hooks/usePeer";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function Chats() {
   const [message, setMessage] = useState<string>("");
-  const [messages, setMessages] = useState<string[]>([]);
-  const socket = useSocket();
   const { roomId } = useRouter().query;
-  const { username } = useUsername();
+  const { myId } = usePeer();
 
-  const handleSendMessage = () => {
-    console.log(`${username} has sent message to ${roomId}`);
-    socket?.emit("chat-message", roomId, username, message);
-    setMessage("");
+  const queryClient = useQueryClient();
+
+  // Queries
+  const { data, refetch } = useQuery({
+    queryKey: ["chats"],
+    queryFn: async () => {
+      const data = await getChatService(roomId as string);
+      return data;
+    },
+    enabled: !!roomId,
+  });
+
+  // const handleSendMessage = () => {
+  //   console.log(`${username} has sent message to ${roomId}`);
+  //   socket?.emit("chat-message", roomId, username, message);
+  //   setMessage("");
+  // };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (message) {
+      const messages = await addChatService({
+        roomId: roomId as string,
+        userId: myId,
+        message,
+      });
+      refetch()
+
+      setMessage("");
+    } else alert("empty input");
   };
 
   useEffect(() => {
-    socket?.on('chat-message', (message) => {
-      console.log('new message');
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
-  }, [socket]);
-
-  useEffect(() => {
-    console.log(messages)
-  }, [messages])
+    console.log(data);
+  }, [data])
   return (
     <div className="mt-4">
       <h2 className="text-lg font-semibold bg-white px-5 py-3">Chats</h2>
@@ -43,25 +63,27 @@ export default function Chats() {
       </div>
 
       <div className="bg-white absolute bottom-0 left-0 w-full h-[80px] py-3 px-4">
-        <div className="relative">
-          <input
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className="bg-gray-100 w-full px-5 py-3 outline-0 rounded-full"
-            placeholder="Type Something..."
-          />
-          <button
-            onClick={handleSendMessage}
-            className="absolute top-1/2 -translate-y-[50%] right-5 "
-          >
-            <Image
-              src="/send-message.svg"
-              alt="send message icon"
-              width={35}
-              height={35}
+        <form onSubmit={handleSubmit}>
+          <div className="relative">
+            <input
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className="bg-gray-100 w-full px-5 py-3 outline-0 rounded-full"
+              placeholder="Type Something..."
             />
-          </button>
-        </div>
+            <button
+              type="submit"
+              className="absolute top-1/2 -translate-y-[50%] right-5 "
+            >
+              <Image
+                src="/send-message.svg"
+                alt="send message icon"
+                width={35}
+                height={35}
+              />
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
