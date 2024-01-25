@@ -26,7 +26,7 @@ export default function Chats() {
       return data;
     },
     enabled: !!roomId,
-    refetchInterval: 10000000000000
+    refetchInterval: 5000
   });
 
   const scrollToBottom = () => {
@@ -42,7 +42,7 @@ export default function Chats() {
     if (message) {
       const messages = await addChatService({
         roomId: roomId as string,
-        userId: myId,
+        userId: sessionStorage.getItem('myId') || '',
         message,
       });
       refetch();
@@ -69,10 +69,10 @@ export default function Chats() {
               key={message?._id}
               className={`px-5 flex justify-center w-full items-start gap-3 ${checkPrevTime && checkPrevChat ? 'py-1' : 'py-4'}`}
             >
-              <Avatar text="Amineul" className={isTheSameTime}/>
+              <Avatar text={message?.users?.username} className={isTheSameTime} color={message?.users?.color}/>
               <p className="flex-1 bg-white px-3 py-2 rounded-lg text-sm">
                 <span className={`block text-xs text-graytext ${isTheSameTime ? 'hidden' : ''}`}>
-                  Amienul Rana
+                  {message?.users?.username}
                 </span>
                 {message?.message}
               </p>
