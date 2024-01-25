@@ -2,6 +2,7 @@ import connectMongo from "@/libs/connectDb";
 import { PrismaClient } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import Chats from "@/models/chats";
+import Users from "@/models/users";
 
 export default async function room(req: NextApiRequest, res: NextApiResponse) {
   await connectMongo();
@@ -18,12 +19,23 @@ export default async function room(req: NextApiRequest, res: NextApiResponse) {
     }
   } else if (req.method === "GET") {
     try {
-      console.log(req?.query);
-      const getAllChats = await Chats.find({roomId: req?.query?.roomId});
-      console.log("get all chat", getAllChats);
-      return res
-        .status(200)
-        .json(getAllChats);
+      const users = await Users.find({ roomId: req?.query?.roomId });
+      const getAllChats = await Chats.find({ roomId: req?.query?.roomId });
+
+      const expectMessage = getAllChats.map((message: any) => {
+        const user = users.find((user) => user.myId === message.myId);
+
+        return {
+          ...message?._doc,
+          users: {
+            username: user?.username,
+            color: user?.color,
+          },
+        };
+      });
+
+
+      return res.status(200).json(expectMessage);
     } catch (error: any) {
       return res
         .status(500)
