@@ -27,6 +27,11 @@ const usersSchema = new Schema(
       type: mongoose.default.Schema.ObjectId,
       ref: "Room",
     },
+    status: {
+      type:String,
+      enum: ['leave','join'],
+      default: 'join',
+    }
   },
   { timestamps: true }
 );
