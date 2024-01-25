@@ -8,18 +8,17 @@ import { addChatService, getChatService } from "@/services/chats";
 import usePeer from "@/hooks/usePeer";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
+import { useShowParticipant } from "../participants/Participants";
 
 export default function Chats() {
   const [message, setMessage] = useState<string>("");
+
+  const { showParticipant } = useShowParticipant()
   const { roomId } = useRouter().query;
   const { myId } = usePeer();
 
-  const queryClient = useQueryClient();
-
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
-
-  // Queries
   const { data, refetch } = useQuery({
     queryKey: ["chats"],
     queryFn: async () => {
@@ -29,12 +28,6 @@ export default function Chats() {
     enabled: !!roomId,
     refetchInterval: 10000000000000
   });
-
-  // const handleSendMessage = () => {
-  //   console.log(`${username} has sent message to ${roomId}`);
-  //   socket?.emit("chat-message", roomId, username, message);
-  //   setMessage("");
-  // };
 
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
@@ -56,7 +49,7 @@ export default function Chats() {
 
       setMessage("");
       scrollToBottom();
-    } else alert("empty input");
+    };
   };
 
   useEffect(() => {
@@ -65,13 +58,12 @@ export default function Chats() {
   return (
     <div className="mt-4">
       <h2 className="text-lg font-semibold bg-white px-5 py-3">Chats</h2>
-      <div className="overflow-auto custom-scrollbar h-[350px] pb-[100px]" ref={messagesContainerRef}>
+      <div className={`overflow-auto custom-scrollbar duration-300 pb-[100px] md:pb-[50px] ${!showParticipant ? 'xl:!h-[540px] 2xl:!h-[700px] h-[350px]' : '2xl:h-[450px] h-[350px]'}`} ref={messagesContainerRef}>
         {data?.map((message: any, index:number) => {
           const checkPrevChat = data?.[index]?.myId === data?.[index - 1]?.myId;
           const checkPrevTime = moment(data?.[index]?.createdAt).format("HH:mm")  === moment(data?.[index - 1]?.createdAt).format("HH:mm");
 
           const isTheSameTime = checkPrevTime && checkPrevChat ? 'opacity-0' : '';
-          console.log(checkPrevTime);
           return (
             <div
               key={message?._id}
