@@ -2,7 +2,6 @@ import connectMongo from '@/libs/connectDb';
 import { PrismaClient } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import Users from '@/models/users';
-import { User } from 'lucide-react';
 import Room from '@/models/room';
 import Chats from '@/models/chats';
 
@@ -39,12 +38,13 @@ export default async function room(req: NextApiRequest, res: NextApiResponse) {
   }else if(req.method === 'DELETE'){
     try {
       const document = await Users.findOne({ myId: req.query?.myId });
-      const totalUserRoom = await Users.find({roomId: document?.roomId});
+      const totalUserRoom = await Users.find({roomId: document?.roomId, status: 'join'});
       if(totalUserRoom?.length === 1){
         await Room.deleteOne({_id: document.roomId});
         await Chats.deleteMany({roomId: document.roomId});
+        await Users.deleteMany({roomId: document?.roomId});
       }
-      const deleteUser = await Users.deleteOne({myId: req.query?.myId});
+      const updateUserStatus = await Users.updateOne({myId: req.query?.myId}, {$set: {status: 'leave'}});
       res.status(200).json({message: 'Successfully Delete user'});
     } catch (error) {
       return res.status(500).json({message:'Failed to get all user'});

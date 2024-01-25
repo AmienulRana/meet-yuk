@@ -1,0 +1,20 @@
+.homeContainer {
+    @apply ;
+  
+    /* h1 {
+      @apply text-xl text-center;
+    } */
+  
+    /* button {
+      @apply ;
+    } */
+  
+    .enterRoom {
+      @apply ;
+  
+      input {
+        @apply ;
+      }
+    }
+  
+  }
