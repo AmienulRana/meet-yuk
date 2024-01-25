@@ -22,10 +22,10 @@ const Player = (props: IPlayer) => {
   return (
     <div
       className={cx(
-        "relative overflow-hidden min-w-max  mb-5 bg-lightblue",
+        "relative overflow-hidden  mb-5 bg-lightblue",
         {
-          "rounded-md h-[140px] w-[150px] shadow-md": !isActive,
-          "rounded-lg h-[60vh]": isActive,
+          "rounded-md h-[140px] w-[150px] min-w-max shadow-md": !isActive,
+          "rounded-lg md:h-[60vh] h-[400px] !w-full": isActive,
           "flex items-center justify-center": !playing,
         }
       )}
@@ -41,7 +41,7 @@ const Player = (props: IPlayer) => {
         config={config}
       />
       {!playing && (
-        <UserSquare2 className={"text-white"} size={isActive ? 400 : 150} />
+        <UserSquare2 className={"text-white"} size={isActive ? 300 : 150} />
       )}
       <div className={`flex justify-between items-center absolute w-full ${isActive ? 'bottom-5 left-5 max-w-[250px]' : 'bottom-2 left-2 max-w-[100px]'}`}>
         <p className="bg-[rgba(0,0,0,.3)] px-2 py-1 truncate text-xs text-white rounded-full">
@@ -49,7 +49,7 @@ const Player = (props: IPlayer) => {
         </p>
       </div>
 
-      {!isActive ? (
+      {
         muted ? (
           <MicOff
             className={"text-white absolute rounded-full   right-2 bottom-2 p-1 bg-buttonPrimary"}
@@ -58,7 +58,7 @@ const Player = (props: IPlayer) => {
         ) : (
           <Mic className={"text-white absolute right-2 rounded-full bottom-2 p-1 bg-primary"} size={24} />
         )
-      ) : undefined}
+      }
     </div>
   );
 };
