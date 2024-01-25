@@ -1,34 +1,35 @@
-import {useState, useEffect, useRef} from 'react'
-
+import { cloneDeep } from "lodash";
+import { useState, useEffect, useRef } from "react";
 
 const useMediaStream = () => {
-    const [state, setState] = useState<MediaStream>()
-    const isStreamSet = useRef(false)
+  const [state, setState] = useState<MediaStream>();
+  const isStreamSet = useRef(false);
 
-    const initStream = async ({video}: {video:boolean}) => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                audio: true,
-                video: true
-            })
-            console.log('stream from useMedia', stream)
-            setState(stream);
-            return stream;
-        } catch (e) {
-            console.log("Error in media navigator", e)
-        }
+  const initStream = async ({ video }: { video: boolean }) => {
+    try {
+      const stream: MediaStream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true,
+      });
+      // console.log('parse the stream', JSON.stringify(Array.from(stream.getTracks())));
+      // console.log('stream from useMedia', stream)
+      setState(stream);
+      return stream;
+    } catch (e) {
+      console.log("Error in media navigator", e);
     }
+  };
 
-    useEffect(() => {
-        if (isStreamSet.current) return;
-        isStreamSet.current = true;
-        initStream({ video: false })
-    }, [])
+  useEffect(() => {
+    if (isStreamSet.current) return;
+    isStreamSet.current = true;
+    initStream({ video: false });
+  }, []);
 
-    return {
-        stream: state,
-        handleOpenCamera: initStream,
-    }
-}
+  return {
+    stream: state,
+    handleOpenCamera: initStream,
+  };
+};
 
-export default useMediaStream
+export default useMediaStream;

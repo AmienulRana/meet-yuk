@@ -26,17 +26,20 @@ const usePeer = () => {
 
             if(!getMyPeer){
                 myPeer.on('open', (id) => {
-                    console.log(`your peer id is ${id}`)
+                    // console.log(`your peer id is ${id}`)
                     setMyId(id);
                     sessionStorage.setItem('my-id', id);
                     socket?.emit('join-room', roomId, {userId:id, username});
-                    // socket?.emit('join-chat', roomId, username);
+                    socket?.emit('test', roomId);
                 })
             }else{ 
-                console.log(`your peer id is ${getMyPeer}`)
+                // console.log(`your peer id is ${getMyPeer}`)
+                myPeer.on('open', (id) => {
+
                     setMyId(getMyPeer);
                     sessionStorage.setItem('my-id', getMyPeer);
                     socket?.emit('join-room', roomId, {userId:getMyPeer, username});
+                })
             }
         })()
     }, [roomId, socket])
