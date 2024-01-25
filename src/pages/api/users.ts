@@ -4,6 +4,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import Users from '@/models/users';
 import { User } from 'lucide-react';
 import Room from '@/models/room';
+import Chats from '@/models/chats';
 
 export default async function room(req: NextApiRequest, res: NextApiResponse) {
     await connectMongo();
@@ -40,7 +41,8 @@ export default async function room(req: NextApiRequest, res: NextApiResponse) {
       const document = await Users.findOne({ myId: req.query?.myId });
       const totalUserRoom = await Users.find({roomId: document?.roomId});
       if(totalUserRoom?.length === 1){
-        const deleteRoom = await Room.deleteOne({_id: document.roomId});
+        await Room.deleteOne({_id: document.roomId});
+        await Chats.deleteMany({roomId: document.roomId});
       }
       const deleteUser = await Users.deleteOne({myId: req.query?.myId});
       res.status(200).json({message: 'Successfully Delete user'});
