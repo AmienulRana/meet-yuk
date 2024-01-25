@@ -19,7 +19,7 @@ export default async function room(req: NextApiRequest, res: NextApiResponse) {
   } else if (req.method === "GET") {
     try {
       console.log(req?.query);
-      const getAllChats = await Chats.find();
+      const getAllChats = await Chats.find({roomId: req?.query?.roomId});
       console.log("get all chat", getAllChats);
       return res
         .status(200)
