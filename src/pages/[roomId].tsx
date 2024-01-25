@@ -21,10 +21,10 @@ import axios from "axios";
 import { getRandomBrightColor } from "@/libs/utils";
 
 type IncomingStream = {
-  url: MediaStream,
-  call: any,
+  url: MediaStream;
+  call: any;
   // userId: any
-}
+};
 
 export default function Room() {
   const socket = useSocket();
@@ -44,7 +44,9 @@ export default function Room() {
   const [users, setUsers] = useState<any[]>([]);
   const { username } = useUsername();
 
-  const [incomingStream, setIncomingStream] = useState<IncomingStream>()
+  const [incomingStream, setIncomingStream] = useState<IncomingStream>();
+
+  const [messages, setMessages] = useState<any>([]);
 
   const router = useRouter();
 
@@ -52,7 +54,6 @@ export default function Room() {
     if (!socket || !peer || !stream) return;
 
     const handleUserConnected = ({ userId: newUser, username }: IUser) => {
-
       const call = peer?.call(newUser, stream);
 
       call?.on("stream", async (incomingStream: any) => {
@@ -60,13 +61,13 @@ export default function Room() {
 
         const users = await getAllUser(false);
         setPlayers((prev: any) => {
-          return ({
+          return {
             ...prev,
             [newUser]: {
               ...users[newUser],
               url: incomingStream,
             },
-          })
+          };
         });
 
         setUsers((prev) => ({
@@ -82,11 +83,10 @@ export default function Room() {
     };
   }, [socket, peer, stream, players]);
 
-
   useEffect(() => {
-    if(!incomingStream?.call) return
-  }, [incomingStream, players])
-  
+    if (!incomingStream?.call) return;
+  }, [incomingStream, players]);
+
   useEffect(() => {
     if (!socket) return;
 
@@ -105,7 +105,7 @@ export default function Room() {
       delete playersCopy[userId];
       setPlayers(playersCopy);
     };
-    
+
     const handleToggleVideo = (userId: string) => {
       console.log(`user with id ${userId} toggled video`);
       setPlayers((prev: any) => {
@@ -126,10 +126,22 @@ export default function Room() {
   }, [setPlayers, users, socket, players]);
 
   useEffect(() => {
+    if (!socket || !peer || !myId) return;
     window.addEventListener("beforeunload", () => {
-      confirm("apkah anda ingin meninggalkan halaman");
+      leaveRoom();
+      localStorage.setItem("refresh", "refreshthepage");
     });
-  }, []);
+  }, [socket, peer, myId]);
+  useEffect(() => {
+    if (!socket || !peer || !myId) return;
+    const isPageRefresh = localStorage.getItem("refresh");
+    if (isPageRefresh) {
+      localStorage.removeItem("refresh");
+      leaveRoom();
+    } else {
+      console.log("no refresh");
+    }
+  }, [socket, peer, myId]);
 
   useEffect(() => {
     if (!peer || !stream) return;
@@ -138,6 +150,7 @@ export default function Room() {
       call.answer(stream);
 
       call.on("stream", async (incomingStream: string) => {
+        console.log(`incoming stream from ${callerId}`);
 
         const users = await getAllUser(false);
         console.log(users);
@@ -161,8 +174,6 @@ export default function Room() {
 
   useEffect(() => {
     if (!stream || !myId) return;
-    
-
   }, [myId, stream, username]);
   async function getAllUser(setAgainPlayer: boolean) {
     try {
@@ -177,14 +188,14 @@ export default function Room() {
         },
       }));
 
-      // if(setAgainPlayer){
-      //   for (let i= 0; i < newStructureRes?.length; i++){
-      //     setPlayers({...players, ...Object.assign({}, ...newStructureRes)})
-      //   }
-      // }
+      if (setAgainPlayer) {
+        for (let i = 0; i < newStructureRes?.length; i++) {
+          setPlayers({ ...players, ...Object.assign({}, ...newStructureRes) });
+        }
+      }
       // console.log('finishi')
 
-      return { ...Object.assign({}, ...newStructureRes) }
+      return { ...Object.assign({}, ...newStructureRes) };
     } catch (error) {
       console.log(error);
     }
@@ -207,10 +218,9 @@ export default function Room() {
           },
         };
       });
-    }
+    };
 
     setMyStream();
-
 
     async function createNewUser() {
       try {
@@ -222,34 +232,45 @@ export default function Room() {
           myId,
           roomId,
         };
-
+        sessionStorage.setItem('myId', myId);
         await axios.post("/api/users", payload);
         await getAllUser(true);
-        setMyStream()
+        setMyStream();
       } catch (error) {
         console.log(error);
       }
     }
     createNewUser();
-
-  
   }, [roomId, myId, stream]);
 
   useEffect(() => {
-    // console.log(players);
-  }, [players])
+    console.log(players);
+  }, [players]);
 
+  useEffect(() => {
+    if (!socket || !username || !roomId) return;
+    socket?.emit("join_room", { username, roomId });
+  }, [socket, username, roomId]);
+
+  // useEffect(() => {
+  //   socket?.on("message", (message) => {
+  //     setMessages((messages: any) => [...messages, message]);
+  //   });
+  // }, [socket]);
+
+  useEffect(() => {
+    console.log('chats',messages);
+  }, [messages])
 
   return (
     <Layout>
-      <section className="flex relative">
+      <section className="md:flex relative">
         <div
-          className="w-9/12 md:px-10 px-4 py-3 min-h-screen bg-lightgray"
-          style={{ height: "calc(100vh - 20px - 100px)" }}
+          className="lg:w-9/12 md:w-2/3 w-full md:px-10 px-4 py-3 md:min-h-screen h-full mb-[100px] md:mb-0 bg-lightgray"
         >
           {playerHighlighted && (
             <Player
-            username={playerHighlighted?.username}
+              username={playerHighlighted?.username}
               url={playerHighlighted?.url}
               muted={playerHighlighted?.muted}
               playing={playerHighlighted?.playing}
@@ -257,13 +278,13 @@ export default function Room() {
             />
           )}
           <div className="flex gap-12 custom-scrollbar flex-nowrap whitespace-nowrap overflow-x-auto">
-            {/* {[1, 2, 3, 4, 5, 6, 7, 8].map(() => ( */}
             <>
               {Object.keys(nonHighlightedPlayers).map((playerId) => {
-                const { url, muted, playing, username } = nonHighlightedPlayers[playerId];
+                const { url, muted, playing, username } =
+                  nonHighlightedPlayers[playerId];
                 return (
                   <Player
-                  username={username}
+                    username={username}
                     key={playerId}
                     url={url}
                     muted={muted}
