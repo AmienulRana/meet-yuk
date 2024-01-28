@@ -36,7 +36,6 @@ export default function Home() {
       <Footer />
       <ModalJoinRoom />
       <ModalCreateRoom />
-      <Toaster />
     </div>
   );
 }

@@ -11,6 +11,7 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <SocketProvider>
       <QueryClientProvider client={queryClient}>
         <Component {...pageProps} />
+      <Toaster />
       </QueryClientProvider>
     </SocketProvider>
   );

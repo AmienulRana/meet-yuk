@@ -19,6 +19,7 @@ import { useUsername } from "@/hooks/useUsername";
 import { Chats } from "@/components/pages/room/chats";
 import axios from "axios";
 import { getRandomBrightColor } from "@/libs/utils";
+import ScreenRecorder from "@/components/ScreenRecorder";
 
 type IncomingStream = {
   url: MediaStream;

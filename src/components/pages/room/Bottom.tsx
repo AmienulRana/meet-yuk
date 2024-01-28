@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { IBottom } from "@/libs/interface";
+import toast from "react-hot-toast";
 
 const Bottom = (props: IBottom) => {
   const { muted, playing, toggleAudio, toggleVideo, leaveRoom } = props;
@@ -48,7 +49,7 @@ const Bottom = (props: IBottom) => {
           onClick={toggleVideo}
         />
       )}
-      <div title="Share screen">
+      <div title="Share screen" onClick={() => toast.error('Oops, screen sharing feature in progress')}>
         <Share
           size={55}
           className={cx(iconClass, "!bg-lightblue !text-primary")}
