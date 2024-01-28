@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import CopySection from "./CopySection";
+import CopySection from "./pages/room/CopySection";
 import Logo from "./Logo";
 import { getDetailRoomService } from "@/services/rooms";
 import { useRouter } from "next/router";

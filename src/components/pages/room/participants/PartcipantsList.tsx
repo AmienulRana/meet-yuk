@@ -1,6 +1,6 @@
 import { IPlayer } from "@/libs/interface";
 import StreamStatus from "../StreamStatus";
-import Avatar from "../Avatar";
+import Avatar from "../../../Avatar";
 
 export default function ParticipantsList({ muted, playing, username, color }: IPlayer){
     return (

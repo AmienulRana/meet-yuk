@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Avatar from "../Avatar";
+import Avatar from "../../../Avatar";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useSocket } from "@/context/SocketContext";
 import { useRouter } from "next/router";

@@ -1,6 +1,6 @@
 import { ILayout } from "@/libs/interface";
 import Logo from "./Logo";
-import CopySection from "./CopySection";
+import CopySection from "./pages/room/CopySection";
 import NavbarRoom from "./NavbarRoom";
 
 export default function Layout({ children }: ILayout) {

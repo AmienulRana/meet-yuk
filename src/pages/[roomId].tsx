@@ -1,5 +1,5 @@
-import Bottom from "@/components/Bottom";
-import Player from "@/components/Player";
+import Bottom from "@/components/pages/room/Bottom";
+import Player from "@/components/pages/room/Player";
 import { useSocket } from "@/context/SocketContext";
 import useMediaStream from "@/hooks/useMediaStream";
 import usePeer from "@/hooks/usePeer";
@@ -7,16 +7,16 @@ import usePlayer from "@/hooks/usePlayer";
 import { useRouter } from "next/router";
 import { cloneDeep } from "lodash";
 import { useEffect, useState } from "react";
-import CopySection from "@/components/CopySection";
+import CopySection from "@/components/pages/room/CopySection";
 import Logo from "@/components/Logo";
 import Layout from "@/components/Layout";
 import "react-perfect-scrollbar/dist/css/styles.css";
-import { Participants } from "@/components/participants";
+import { Participants } from "@/components/pages/room/participants";
 import Avatar from "@/components/Avatar";
 import Image from "next/image";
 import { IUser } from "@/libs/interface";
 import { useUsername } from "@/hooks/useUsername";
-import { Chats } from "@/components/chats";
+import { Chats } from "@/components/pages/room/chats";
 import axios from "axios";
 import { getRandomBrightColor } from "@/libs/utils";
 

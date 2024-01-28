@@ -1,5 +1,5 @@
 import Container from "@/components/Container";
-import StreamStatus from "@/components/StreamStatus";
+import StreamStatus from "@/components/pages/room/StreamStatus";
 import { Mic, MicOff } from "lucide-react";
 import Image from "next/image";
 import HeroImage from "./HeroImage";
