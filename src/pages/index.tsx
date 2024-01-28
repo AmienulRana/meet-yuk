@@ -18,7 +18,7 @@ import { FaCheck, FaCheckCircle } from "react-icons/fa";
 import { BsCameraVideoFill, BsChatLeftFill, BsStars } from "react-icons/bs";
 import { CardFeature } from "@/components/pages/home";
 import { TbScreenShare } from "react-icons/tb";
-import {Footer} from "@/components/footer";
+import { Footer } from "@/components/footer";
 import { Modal, ModalCreateRoom } from "@/components/modal";
 import Input from "@/components/Input";
 import useJoinModal from "@/hooks/useJoinRoomModal";
@@ -34,26 +34,19 @@ export default function Home() {
   const [roomId, setRoomId] = useState("");
   const { username, setUsername } = useUsername();
 
-  const { onOpen } = useCreateModal()
-  const { onOpen: openJoinModal } = useJoinModal()
-
-
+  const { onOpen } = useCreateModal();
+  const { onOpen: openJoinModal } = useJoinModal();
 
   const [loading, setIsLoading] = useState(false);
 
-  
-
- 
-
   useEffect(() => {
-    localStorage.removeItem('refresh');
-
+    localStorage.removeItem("refresh");
   }, []);
   return (
-    <div>
+    <div className="overflow-hidden">
       <NavbarHome />
-      <Container className="grid gap-10  mt-20 md:grid-cols-2">
-        <div>
+      <Container className="grid gap-10 mt-20 md:grid-cols-2">
+        <div data-aos="fade-up">
           <h1 className="text-5xl leading-[55px]">
             Meetings without worrying about{" "}
             <span className="text-primary">cost and limit time.</span>
@@ -79,7 +72,7 @@ export default function Home() {
           </div>
         </div>
         <div className="">
-          <div className="relative">
+          <div className="relative" data-aos="fade-up" data-aos-duration="300">
             <Image
               src={"/images/banner1.webp"}
               width={250}
@@ -101,7 +94,11 @@ export default function Home() {
             </div>
           </div>
           <div className="grid grid-cols-2 mt-5 gap-5">
-            <div className="relative">
+            <div
+              className="relative"
+              data-aos="fade-up"
+              data-aos-duration="500"
+            >
               <Image
                 src={"/images/banner2.webp"}
                 width={150}
@@ -119,7 +116,11 @@ export default function Home() {
                 />
               </div>
             </div>
-            <div className="relative">
+            <div
+              className="relative"
+              data-aos="fade-up"
+              data-aos-duration="900"
+            >
               <Image
                 src={"/images/banner3.webp"}
                 width={150}
@@ -141,11 +142,15 @@ export default function Home() {
         </div>
       </Container>
       <Container className="md:mt-48 mt-24">
-        <p className="text-center mb-4 text-gray-400">
+        <p className="text-center mb-4 text-gray-400" data-aos="fade-up">
           Used daily by more than{" "}
           <span className="font-bold text-primary">200+</span> Company
         </p>
-        <div className="border gap-5 flex px-5 justify-between border-gray-300 rounded-md mx-auto lg:w-1/2 md:w-[80%] w-full overflow-hidden">
+        <div
+          className="border gap-5 flex px-5 justify-between border-gray-300 rounded-md mx-auto lg:w-1/2 md:w-[80%] w-full overflow-hidden"
+          data-aos="fade-up"
+          data-aos-duration="500"
+        >
           <Image
             src={"/images/company/upwork.png"}
             height={80}
@@ -183,7 +188,10 @@ export default function Home() {
           />
         </div>
         <section className="md:mt-48 mt-24 grid md:gap-20 gap-10 h-auto md:grid-cols-2">
-          <div className="relative rounded-2xl overflow-hidden">
+          <div
+            className="relative rounded-2xl overflow-hidden"
+            data-aos="fade-right"
+          >
             <Image
               src={"/images/image-recording.webp"}
               width={300}
@@ -205,12 +213,20 @@ export default function Home() {
                 Start a meeting and our platform will automatically record video
                 and audio in real-time
               </p>
-              <Button onClick={onOpen} size="small" variant="background" className="px-6 mt-5">
+              <Button
+                onClick={onOpen}
+                size="small"
+                variant="background"
+                className="px-6 mt-5"
+              >
                 Try Now
               </Button>
             </div>
           </div>
-          <div className="relative bg-[rgb(234,253,251)] h-[300px] md:h-auto rounded-2xl">
+          <div
+            data-aos="fade-left"
+            className="relative bg-[rgb(234,253,251)] h-[300px] md:h-auto rounded-2xl"
+          >
             <div className="mx-auto h-full md:w-[70%] w-[905]">
               <div className="px-5 mt-5">
                 <div className="flex justify-center w-full items-start gap-3">
@@ -268,7 +284,12 @@ export default function Home() {
                 effortlessly records video and audio during meetings. Stay in
                 sync effortlessly!
               </p>
-              <Button onClick={onOpen} size="small" variant="background" className="px-6 mt-5">
+              <Button
+                onClick={onOpen}
+                size="small"
+                variant="background"
+                className="px-6 mt-5"
+              >
                 Try Now
               </Button>
             </div>
@@ -306,30 +327,38 @@ export default function Home() {
         </div>
         <div className="relative md:-translate-x-8 h-max">
           <div className="grid md:grid-cols-2 z-10 gap-5">
-            <CardFeature
-              title="Build to event"
-              Icon={BsCameraVideoFill}
-              desc="Create a room for online meetings with your team members"
-              color="purple"
-            />
-            <CardFeature
-              title="Easy to use"
-              Icon={BsStars}
-              desc="Find the create room button to create, and join room to join. simple, does not require auth"
-              color="blue"
-            />
-            <CardFeature
-              title="Share Screen"
-              Icon={TbScreenShare}
-              desc="Want a percentage? Don't worry, you can share your screen with users in the room"
-              color="orange"
-            />
-            <CardFeature
-              title="Real Time Chat"
-              Icon={BsChatLeftFill}
-              desc="Can't get on the mic during a meeting? You can use the chat feature available in the room"
-              color="green"
-            />
+            <div data-aos="fade-down">
+              <CardFeature
+                title="Build to event"
+                Icon={BsCameraVideoFill}
+                desc="Create a room for online meetings with your team members"
+                color="purple"
+              />
+            </div>
+            <div data-aos="fade-down" data-aos-duration="500">
+              <CardFeature
+                title="Easy to use"
+                Icon={BsStars}
+                desc="Find the create room button to create, and join room to join. simple, does not require auth"
+                color="blue"
+              />
+            </div>
+            <div data-aos="fade-up" data-aos-duration="900">
+              <CardFeature
+                title="Share Screen"
+                Icon={TbScreenShare}
+                desc="Want a percentage? Don't worry, you can share your screen with users in the room"
+                color="orange"
+              />
+            </div>
+            <div data-aos="fade-up" data-aos-duration="1200">
+              <CardFeature
+                title="Real Time Chat"
+                Icon={BsChatLeftFill}
+                desc="Can't get on the mic during a meeting? You can use the chat feature available in the room"
+                color="green"
+              />
+            </div>
           </div>
           <Image
             src={"/dots.svg"}
@@ -351,8 +380,14 @@ export default function Home() {
               className="rounded-xl w-[520px] h-[400px]"
               alt="ceo image"
             />
-            <div className="flex-1 mt-2 md:translate-y-8 -translate-y-12  px-5">
-              <div className="bg-white md:-translate-x-20  rounded-lg px-6 py-4">
+            <div
+              data-aos="fade-left"
+              className="flex-1 mt-2 md:translate-y-8 -translate-y-12  px-5"
+            >
+              <div
+                data-aos-duration="500"
+                className="bg-white md:-translate-x-20  rounded-lg px-6 py-4"
+              >
                 <h2 className="md:text-4xl text-2xl leading-tight">
                   &quot;CallYuk is an Application that is easy to use for
                   meetings, I feel helped by this Application&quot;
@@ -366,42 +401,65 @@ export default function Home() {
       </section>
 
       <Container className="md:mt-24 mt-16 text-center flex flex-col items-center">
-            <h2 className="text-4xl font-semibold text-primary">Try callyuk today</h2>
-            <p className="mt-5 md:w-[60%] mx-auto">With our advanced modern technology, your meetings are not just recorded - they&apos;re transformed into valuable insight and productivity boosters.</p>
-            <Button onClick={openJoinModal} size="small" variant="background" className="my-5 px-7">
-                Start Now
-            </Button>
-            <div className="my-10 relative">
-            <Image
+        <h2 className="text-4xl font-semibold text-primary" data-aos="fade-up">
+          Try callyuk today
+        </h2>
+        <p
+          className="mt-5 md:w-[60%] mx-auto"
+          data-aos="fade-up"
+          data-aos-duration="500"
+        >
+          With our advanced modern technology, your meetings are not just
+          recorded - they&apos;re transformed into valuable insight and
+          productivity boosters.
+        </p>
+        <Button
+          data-aos="fade-up"
+          data-aos-duration="800"
+          onClick={openJoinModal}
+          size="small"
+          variant="background"
+          className="my-5 px-7"
+        >
+          Start Now
+        </Button>
+        <div className="my-10 relative">
+          <Image
             src={"/dots.svg"}
             width={100}
             height={100}
             alt="dots svg"
             className="absolute -top-8 md:-right-8 right-0 -z-10"
+            data-aos="fade-up"
           />
-              <div className="relative">
-                <Image
-                  src={"/images/banner1.webp"}
-                  width={250}
-                  height={250}
-                  alt="banner 1"
-                  className="w-full object-cover rounded-3xl h-[300px]"
-                />
-                <div className="flex items-center justify-between absolute w-full top-5 left-0 px-5">
-                  <div className="bg-[rgba(0,0,0,.5)] px-3 text-white rounded-md flex items-center gap-2 py-1">
-                    <span className="w-4 rounded-full h-4 block bg-red-500 border-white border-2" />
-                    <p className="text-sm">REC</p>
-                  </div>
-                  <div className="bg-white px-3 textprimary rounded-md flex items-center gap-2 py-1">
-                    <p className="text-sm text-primary font-semibold">Dyana yeen</p>
-                  </div>
-                </div>
-                <div className="absolute bottom-5 left-[50%] bg-white px-5 rounded-md py-2 -translate-x-[50%]">
-                  <StreamStatus muted playing />
-                </div>
+          <div className="relative" data-aos="fade-up" data-aos-duration="500">
+            <Image
+              src={"/images/banner1.webp"}
+              width={250}
+              height={250}
+              alt="banner 1"
+              className="w-full object-cover rounded-3xl h-[300px]"
+            />
+            <div className="flex items-center justify-between absolute w-full top-5 left-0 px-5">
+              <div className="bg-[rgba(0,0,0,.5)] px-3 text-white rounded-md flex items-center gap-2 py-1">
+                <span className="w-4 rounded-full h-4 block bg-red-500 border-white border-2" />
+                <p className="text-sm">REC</p>
               </div>
-              <div className="grid grid-cols-2 mt-5 gap-5">
-                <div className="relative">
+              <div className="bg-white px-3 textprimary rounded-md flex items-center gap-2 py-1">
+                <p className="text-sm text-primary font-semibold">Dyana yeen</p>
+              </div>
+            </div>
+            <div className="absolute bottom-5 left-[50%] bg-white px-5 rounded-md py-2 -translate-x-[50%]">
+              <StreamStatus muted playing />
+            </div>
+          </div>
+          <div
+            className="grid grid-cols-2 mt-5 gap-5"
+          >
+            <div className="relative"
+              data-aos="fade-right"
+              data-aos-duration="800"
+            >
               <Image
                 src={"/images/banner2.webp"}
                 width={150}
@@ -419,7 +477,10 @@ export default function Home() {
                 />
               </div>
             </div>
-            <div className="relative">
+            <div className="relative"
+              data-aos="fade-left"
+              data-aos-duration="1000"
+            >
               <Image
                 src={"/images/banner3.webp"}
                 width={150}
@@ -449,12 +510,11 @@ export default function Home() {
       </Container>
 
       <Footer />
-      
 
       <ModalJoinRoom />
       <ModalCreateRoom />
 
-      <Toaster  />
+      <Toaster />
     </div>
   );
 }
