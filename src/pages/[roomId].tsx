@@ -55,27 +55,25 @@ export default function Room() {
 
     const handleUserConnected = ({ userId: newUser, username }: IUser) => {
       const call = peer?.call(newUser, stream);
-        call?.on("stream", async (incomingStream: any) => {
-          // console.log(`incoming stream from ${newUser}`);
-          // console.log('run my stream sfter 3s')
-          const users = await getAllUser(false);
-          setPlayers((prev: any) => {
-            return {
-              ...prev,
-              [newUser]: {
-                ...users[newUser],
-                url: incomingStream,
-              },
-            };
-          });
-  
-          setUsers((prev) => ({
+      call?.on("stream", async (incomingStream: any) => {
+        const users = await getAllUser(false);
+        setPlayers((prev: any) => {
+          return {
             ...prev,
-            [newUser]: call,
-          }));
+            [newUser]: {
+              ...users[newUser],
+              url: incomingStream,
+            },
+          };
         });
+
+        setUsers((prev) => ({
+          ...prev,
+          [newUser]: call,
+        }));
+      });
     };
-      socket?.on("user-connected", handleUserConnected);
+    socket?.on("user-connected", handleUserConnected);
 
     return () => {
       socket?.off("user-connected", handleUserConnected);
@@ -90,7 +88,6 @@ export default function Room() {
     if (!socket) return;
 
     const handleToggleAudio = (userId: string) => {
-      console.log(`user with id ${userId} toggled audio`);
       setPlayers((prev: any) => {
         const copy = cloneDeep(prev);
         copy[userId].muted = !copy?.[userId]?.muted;
@@ -98,7 +95,6 @@ export default function Room() {
       });
     };
     const handleUserLeave = (userId: string) => {
-      console.log(`user ${userId} is leaving the room`);
       users?.[userId as any]?.close();
       const playersCopy = cloneDeep(players);
       delete playersCopy[userId];
@@ -106,7 +102,6 @@ export default function Room() {
     };
 
     const handleToggleVideo = (userId: string) => {
-      console.log(`user with id ${userId} toggled video`);
       setPlayers((prev: any) => {
         const copy = cloneDeep(prev);
         copy[userId].playing = !copy?.[userId]?.playing;
@@ -130,6 +125,7 @@ export default function Room() {
       localStorage.setItem("refresh", "refreshthepage");
     });
   }, [socket, peer, myId]);
+
   useEffect(() => {
     if (!socket || !peer || !myId) return;
     const isPageRefresh = localStorage.getItem("refresh");
@@ -143,41 +139,30 @@ export default function Room() {
 
   useEffect(() => {
     if (!peer || !stream) return;
-      peer?.on("call", (call: any) => {
-        const { peer: callerId } = call;
-        call.answer(stream);
-
-        
-        call.on("stream", async (incomingStream: string) => {
-          console.log(`incoming stream from ${callerId}`);
-          console.log('run incoming stream after 3000s');
-
-          // console.log('states player', players)
-  
-          const users = await getAllUser(false, 'waktu panggil my stream');
-          console.log('user get in incoming stream', users);
-          setPlayers((prev: any) => {
-            return {
-              ...prev,
-              [callerId]: {
-                ...users[callerId],
-                url: incomingStream,
-              },
-            };
-          });
-          console.log('set players')
-  
-          setUsers((prev) => ({
+    peer?.on("call", (call: any) => {
+      const { peer: callerId } = call;
+      call.answer(stream);
+      call.on("stream", async (incomingStream: string) => {
+        const users = await getAllUser(false, "waktu panggil my stream");
+        setPlayers((prev: any) => {
+          return {
             ...prev,
-            [callerId]: call,
-          }));
+            [callerId]: {
+              ...users[callerId],
+              url: incomingStream,
+            },
+          };
         });
+        setUsers((prev) => ({
+          ...prev,
+          [callerId]: call,
+        }));
       });
+    });
   }, [peer, stream]);
 
   async function getAllUser(setAgainPlayer: boolean, message?: string) {
     try {
-      // console.log('run get all user');
       const response = await axios.get(`/api/users?roomId=${roomId}`);
       console.log(response?.data);
       const newStructureRes: any[] = response?.data?.map((player: any) => ({
@@ -189,10 +174,7 @@ export default function Room() {
         },
       }));
 
-      console.log('new structure res', newStructureRes, message);
-      
       if (setAgainPlayer) {
-        console.log('resonponse from get all user', newStructureRes)
         for (let i = 0; i < newStructureRes?.length; i++) {
           setPlayers({ ...players, ...Object.assign({}, ...newStructureRes) });
         }
@@ -204,18 +186,17 @@ export default function Room() {
     }
   }
 
-  useEffect(() => {
-    // if(!roomId) return;
-    getAllUser(true, 'first get all users');
-  }, [roomId])
+  // useEffect(() => {
+  //   // if(!roomId) return;
+  //   getAllUser(true, 'first get all users');
+  // }, [roomId])
 
   useEffect(() => {
-    // console.log(stream, myId);
     if (!stream || !myId) return;
 
     const setMyStream = async () => {
       const users = await getAllUser(false);
-      console.log('state waktu set my stream', users);
+      console.log("state waktu set my stream", users);
       setPlayers((prev: any) => {
         return {
           ...prev,
@@ -241,7 +222,7 @@ export default function Room() {
           myId,
           roomId,
         };
-        sessionStorage.setItem('myId', myId);
+        sessionStorage.setItem("myId", myId);
         await axios.post("/api/users", payload);
         await getAllUser(true);
         setMyStream();
@@ -256,27 +237,10 @@ export default function Room() {
     console.log(players);
   }, [players]);
 
-  // useEffect(() => {
-  //   if (!socket || !username || !roomId) return;
-  //   socket?.emit("join_room", { username, roomId });
-  // }, [socket, username, roomId]);
-
-  // useEffect(() => {
-  //   socket?.on("message", (message) => {
-  //     setMessages((messages: any) => [...messages, message]);
-  //   });
-  // }, [socket]);
-
-  // useEffect(() => {
-  //   console.log('chats',messages);
-  // }, [messages])
-
   return (
     <Layout>
       <section className="md:flex relative">
-        <div
-          className="lg:w-9/12 md:w-2/3 w-full md:px-10 px-4 py-3 md:min-h-screen h-full mb-[100px] md:mb-0 bg-lightgray"
-        >
+        <div className="lg:w-9/12 md:w-2/3 w-full md:px-10 px-4 py-3 md:min-h-screen h-full mb-[100px] md:mb-0 bg-lightgray">
           {playerHighlighted && (
             <Player
               username={playerHighlighted?.username}
