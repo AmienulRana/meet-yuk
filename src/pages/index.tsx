@@ -4,6 +4,7 @@ import NavbarHome from "@/components/NavbarHome";
 import {
   Benefits,
   CompanyUsage,
+  Faq,
   Feature,
   Hero,
   Invitation,
@@ -13,6 +14,7 @@ import { Footer } from "@/components/footer";
 import { ModalCreateRoom } from "@/components/modal";
 import ModalJoinRoom from "@/components/modal/ModalJoinRoom";
 import { Toaster } from "react-hot-toast";
+import Accordion from "@/components/Accordion";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,6 +32,7 @@ export default function Home() {
       <Benefits />
       <Review />
       <Invitation />
+      <Faq />
       <Footer />
       <ModalJoinRoom />
       <ModalCreateRoom />

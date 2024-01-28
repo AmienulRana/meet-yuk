@@ -7,3 +7,4 @@ export { default as Feature } from "./Feature/Feature";
 export { default as Benefits } from "./Benefit/Benefit";
 export { default as Review } from "./Review";
 export { default as Invitation } from "./Invitation";
+export { default as Faq} from './Faq'
