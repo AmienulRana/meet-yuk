@@ -6,6 +6,7 @@ import {
   CompanyUsage,
   Feature,
   Hero,
+  Invitation,
   Review,
 } from "@/components/pages/home";
 import { Footer } from "@/components/footer";
@@ -28,6 +29,7 @@ export default function Home() {
       <Feature />
       <Benefits />
       <Review />
+      <Invitation />
       <Footer />
       <ModalJoinRoom />
       <ModalCreateRoom />
