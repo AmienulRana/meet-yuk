@@ -32,6 +32,9 @@ const faqs = [
 
 export default function Faq(){
     return (
+      <div>
+        <h2 className="text-xl text-center text-primary mb-5">Faq</h2>
         <Accordion items={faqs}/>
+      </div>
     )
 }
