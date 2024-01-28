@@ -1,4 +1,4 @@
-import { background } from "@/components/pages/home/CardFeature";
+import { background } from "@/components/pages/home/Benefit/CardFeature";
 import { ReactElement, ReactNode } from "react";
 
 export interface IPlayer {
