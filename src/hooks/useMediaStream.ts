@@ -1,5 +1,6 @@
 import { cloneDeep } from "lodash";
 import { useState, useEffect, useRef } from "react";
+import toast from "react-hot-toast";
 
 const useMediaStream = () => {
   const [state, setState] = useState<MediaStream>();
@@ -16,6 +17,7 @@ const useMediaStream = () => {
       setState(stream);
       return stream;
     } catch (e) {
+      toast.error('System not allowed to get audio/video');
       console.log("Error in media navigator", e);
     }
   };

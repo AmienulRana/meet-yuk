@@ -55,28 +55,27 @@ export default function Room() {
 
     const handleUserConnected = ({ userId: newUser, username }: IUser) => {
       const call = peer?.call(newUser, stream);
-
-      call?.on("stream", async (incomingStream: any) => {
-        console.log(`incoming stream from ${newUser}`);
-
-        const users = await getAllUser(false);
-        setPlayers((prev: any) => {
-          return {
+        call?.on("stream", async (incomingStream: any) => {
+          // console.log(`incoming stream from ${newUser}`);
+          // console.log('run my stream sfter 3s')
+          const users = await getAllUser(false);
+          setPlayers((prev: any) => {
+            return {
+              ...prev,
+              [newUser]: {
+                ...users[newUser],
+                url: incomingStream,
+              },
+            };
+          });
+  
+          setUsers((prev) => ({
             ...prev,
-            [newUser]: {
-              ...users[newUser],
-              url: incomingStream,
-            },
-          };
+            [newUser]: call,
+          }));
         });
-
-        setUsers((prev) => ({
-          ...prev,
-          [newUser]: call,
-        }));
-      });
     };
-    socket?.on("user-connected", handleUserConnected);
+      socket?.on("user-connected", handleUserConnected);
 
     return () => {
       socket?.off("user-connected", handleUserConnected);
@@ -128,7 +127,6 @@ export default function Room() {
   useEffect(() => {
     if (!socket || !peer || !myId) return;
     window.addEventListener("beforeunload", () => {
-      leaveRoom();
       localStorage.setItem("refresh", "refreshthepage");
     });
   }, [socket, peer, myId]);
@@ -145,40 +143,43 @@ export default function Room() {
 
   useEffect(() => {
     if (!peer || !stream) return;
-    peer?.on("call", (call: any) => {
-      const { peer: callerId } = call;
-      call.answer(stream);
+      peer?.on("call", (call: any) => {
+        const { peer: callerId } = call;
+        call.answer(stream);
 
-      call.on("stream", async (incomingStream: string) => {
-        console.log(`incoming stream from ${callerId}`);
+        
+        call.on("stream", async (incomingStream: string) => {
+          console.log(`incoming stream from ${callerId}`);
+          console.log('run incoming stream after 3000s');
 
-        const users = await getAllUser(false);
-        console.log(users);
-        setPlayers((prev: any) => {
-          return {
+          // console.log('states player', players)
+  
+          const users = await getAllUser(false, 'waktu panggil my stream');
+          console.log('user get in incoming stream', users);
+          setPlayers((prev: any) => {
+            return {
+              ...prev,
+              [callerId]: {
+                ...users[callerId],
+                url: incomingStream,
+              },
+            };
+          });
+          console.log('set players')
+  
+          setUsers((prev) => ({
             ...prev,
-            [callerId]: {
-              ...users[callerId],
-              url: incomingStream,
-            },
-          };
+            [callerId]: call,
+          }));
         });
-
-        setUsers((prev) => ({
-          ...prev,
-          [callerId]: call,
-        }));
       });
-    });
   }, [peer, stream]);
 
-  useEffect(() => {
-    if (!stream || !myId) return;
-  }, [myId, stream, username]);
-  async function getAllUser(setAgainPlayer: boolean) {
+  async function getAllUser(setAgainPlayer: boolean, message?: string) {
     try {
+      // console.log('run get all user');
       const response = await axios.get(`/api/users?roomId=${roomId}`);
-      // console.log(response?.data);
+      console.log(response?.data);
       const newStructureRes: any[] = response?.data?.map((player: any) => ({
         [player?.myId]: {
           username: player?.username,
@@ -188,12 +189,14 @@ export default function Room() {
         },
       }));
 
+      console.log('new structure res', newStructureRes, message);
+      
       if (setAgainPlayer) {
+        console.log('resonponse from get all user', newStructureRes)
         for (let i = 0; i < newStructureRes?.length; i++) {
           setPlayers({ ...players, ...Object.assign({}, ...newStructureRes) });
         }
       }
-      // console.log('finishi')
 
       return { ...Object.assign({}, ...newStructureRes) };
     } catch (error) {
@@ -202,11 +205,17 @@ export default function Room() {
   }
 
   useEffect(() => {
+    // if(!roomId) return;
+    getAllUser(true, 'first get all users');
+  }, [roomId])
+
+  useEffect(() => {
     // console.log(stream, myId);
     if (!stream || !myId) return;
 
     const setMyStream = async () => {
       const users = await getAllUser(false);
+      console.log('state waktu set my stream', users);
       setPlayers((prev: any) => {
         return {
           ...prev,
@@ -247,10 +256,10 @@ export default function Room() {
     console.log(players);
   }, [players]);
 
-  useEffect(() => {
-    if (!socket || !username || !roomId) return;
-    socket?.emit("join_room", { username, roomId });
-  }, [socket, username, roomId]);
+  // useEffect(() => {
+  //   if (!socket || !username || !roomId) return;
+  //   socket?.emit("join_room", { username, roomId });
+  // }, [socket, username, roomId]);
 
   // useEffect(() => {
   //   socket?.on("message", (message) => {
@@ -258,9 +267,9 @@ export default function Room() {
   //   });
   // }, [socket]);
 
-  useEffect(() => {
-    console.log('chats',messages);
-  }, [messages])
+  // useEffect(() => {
+  //   console.log('chats',messages);
+  // }, [messages])
 
   return (
     <Layout>
@@ -277,7 +286,7 @@ export default function Room() {
               isActive
             />
           )}
-          <div className="flex gap-12 custom-scrollbar flex-nowrap whitespace-nowrap overflow-x-auto">
+          <div className="flex pb-[50px] gap-12 custom-scrollbar flex-nowrap whitespace-nowrap overflow-x-auto">
             <>
               {Object.keys(nonHighlightedPlayers).map((playerId) => {
                 const { url, muted, playing, username } =

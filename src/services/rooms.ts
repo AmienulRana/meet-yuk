@@ -4,8 +4,10 @@ import toast from "react-hot-toast";
 export async function checkExistRoom(id: string) {
   try {
     const response  = await  axios.get(`/api/room?roomId=${id}`);
+    console.log(response);
     return response?.data;
   } catch (error: any) {
+    console.log(error);
     if(error?.status === 500){
         toast.error("Room id doesn't exist");    
     }else{

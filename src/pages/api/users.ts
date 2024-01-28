@@ -11,7 +11,7 @@ export default async function room(req: NextApiRequest, res: NextApiResponse) {
     try {
         const findUserId = await Users.findOne({myId: req?.body?.myId});
         if(!findUserId){
-          const newUser = await new Users({...req.body});
+          const newUser = await new Users({...req.body, status: 'join'});
           newUser?.save();
           return res.status(200).json({message: 'Successfully created new user'})
         }
@@ -38,7 +38,9 @@ export default async function room(req: NextApiRequest, res: NextApiResponse) {
   }else if(req.method === 'DELETE'){
     try {
       const document = await Users.findOne({ myId: req.query?.myId });
+      const totalUser = await Users.find({roomId: document?.roomId});
       const totalUserRoom = await Users.find({roomId: document?.roomId, status: 'join'});
+      console.log(totalUserRoom);
       if(totalUserRoom?.length === 1){
         await Room.deleteOne({_id: document.roomId});
         await Chats.deleteMany({roomId: document.roomId});
@@ -52,7 +54,7 @@ export default async function room(req: NextApiRequest, res: NextApiResponse) {
   }
   else {
     try {
-      const findAllUser = await Users.find({roomId: req.query?.roomId});
+      const findAllUser = await Users.find({roomId: req.query?.roomId, status: 'join'});
       res.status(200).json(findAllUser);
     } catch (error) {
       return res.status(500).json({message:'Failed to get all user'});
