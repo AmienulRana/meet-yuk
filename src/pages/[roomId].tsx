@@ -57,6 +57,7 @@ export default function Room() {
     const handleUserConnected = ({ userId: newUser, username }: IUser) => {
       const call = peer?.call(newUser, stream);
       call?.on("stream", async (incomingStream: any) => {
+        console.log('connect incoming stream users', incomingStream);
         const users = await getAllUser(false);
         setPlayers((prev: any) => {
           return {
@@ -144,6 +145,7 @@ export default function Room() {
       const { peer: callerId } = call;
       call.answer(stream);
       call.on("stream", async (incomingStream: string) => {
+        console.log('incoming stream', incomingStream);
         const users = await getAllUser(false, "waktu panggil my stream");
         setPlayers((prev: any) => {
           return {
