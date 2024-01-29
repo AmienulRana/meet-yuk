@@ -18,11 +18,6 @@ const faqs = [
         "Ini terjadi karena saat pertama kali anda memasuki room, browser memerlukan akses ke kamera dan microphone anda. sehingga beberapa proses ter-block oleh request permintaan izin tersebut.",
     },
     {
-      title: "Kenapa url nya tidak jelas? | *yang bener aja!",
-      explain:
-        "Server yang dipakai aplikasi ini adalah server gratis. Kenapa? karena untuk membuat url nya menjadi static butuh biaya yang cukup lumayan untuk menyimpan aplikasi ini ke dalam server asli",
-    },
-    {
       title: "Apakah saya bisa mendapat source code ini? | *rugi dong!",
       explain:
         "Tapi boong! hehehe (hanya bercanda). Jika teman-teman developer tertarik dengan project ini dan ingin mengembangkan aplikasi ini  sebagai portfolio teman-teman, kalian bisa mengunjungi repo github saya di https://github.com/AmienulRana/meet-yuk",
