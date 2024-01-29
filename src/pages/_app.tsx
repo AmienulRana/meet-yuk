@@ -12,7 +12,7 @@ import {
 } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
-
+import { Analytics } from '@vercel/analytics/react';
 const queryClient = new QueryClient();
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -24,6 +24,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <SocketProvider>
       <QueryClientProvider client={queryClient}>
         <Component {...pageProps} />
+        <Analytics />
       <Toaster />
       </QueryClientProvider>
     </SocketProvider>
