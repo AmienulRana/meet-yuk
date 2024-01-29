@@ -19,9 +19,10 @@ export async function checkExistRoom(id: string) {
 
 export async function getDetailRoomService(id: string) {
   try {
-    const response  = await  axios.put(`/api/room?id=${id}`);
+    const response  = await axios.put(`/api/room?id=${id}`);
     return response?.data;
   } catch (error: any) {
     console.log(error);
+    window.location.href = '/'
   }
 }

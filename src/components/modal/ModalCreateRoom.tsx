@@ -6,6 +6,7 @@ import useCreateModal from "@/hooks/useCreateRoomModal";
 import axios from "axios";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import toast from "react-hot-toast";
 
 export default function ModalCreateRoom() {
   const { isOpen, onClose } = useCreateModal();
@@ -22,6 +23,7 @@ export default function ModalCreateRoom() {
 
 
   const createAndJoin = async () => {
+    if(!roomName || !username) return toast.error('Please Input Room name or username')
     setIsLoading(true);
     try {
       const response = await axios.post("/api/room", { roomName });

@@ -43,7 +43,7 @@ interface IAccordion {
 }
 export default function Accordion({ items }: IAccordion) {
   return (
-    <Container className="md:mt-48 mt-24 md:w-[70%]w-[90%] lg:w-[60%] max-w-[1000px] mx-auto">
+    <Container className="md:w-[70%]w-[90%] lg:w-[60%] max-w-[1000px] mx-auto">
       {items?.map((faq) => (
         <AccordionItems title={faq?.title} explain={faq?.explain} key={faq?.title}/>
       ))}
