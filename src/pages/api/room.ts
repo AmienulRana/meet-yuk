@@ -17,6 +17,7 @@ export default async function room(req: NextApiRequest, res: NextApiResponse) {
   } else if(req.method === 'PUT') {
     try {
         const findRoom = await Room.findById({_id:  req.query?.id});
+        console.log(findRoom);
         return res.status(200).json({message: `Find room with id ${req.query?.id}`, room: findRoom})        
     } catch (error: any) {
         return res.status(500).json({message:'Failed to find room'});
